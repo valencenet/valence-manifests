@@ -1,6 +1,0 @@
-commonLabels:
-  app: postgres
-resources:
-  - deployment.yaml
-  - service.yaml
-  - persistantVolume.yaml
