@@ -1,10 +1,5 @@
 bases:
   - ./todo-backend-django
   - ./todo-backend-django-valence
-  - ./todo-backend-express
-  - ./postgres
-  - ./todo-backend-golang
-  - ./todo-backend-java
 resources:
-  - ./slo-microservices.yaml
   - ./slo-webapps.yaml

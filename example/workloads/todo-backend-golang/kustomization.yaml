@@ -1,6 +1,0 @@
-commonLabels:
-  app: todo-backend-golang
-resources:
-  - deployment.yaml
-  - service.yaml
-  - workload.yaml

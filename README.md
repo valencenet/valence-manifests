@@ -1,27 +1,31 @@
-# Valence
+# Valence 🚀🤖
 
+## Introduction
 Valence is a cost and performance management operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives.  It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence acts as a bidirectional pod autoscaling solution and/or intelligent right sizing solution in order to ensure maximum utility of your cluster without performance degredation.
  
-Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator, Valence, figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use(such as HTTP Requests).
+## How it works
+Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use(such as HTTP Requests).
 
-1) [Suggested On-boarding](#suggested-on-boarding)
+## TOC
+1) [How to get started](#how-to-get-started)
 2) [Installation](#installation)
 3) [Using Valence](#using-valence)
 4) [Testing Valence with Example Workloads](#example-workloads)
 
-Want to get started quickly with example workloads?
+## Want to get started quickly with example workloads?
 - start on a fresh cluster such as docker-for-desktop
 - if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectly apply -f valence.yaml -f example-workloads.yaml`
+- `kubectly apply -f valence.yaml`
+- `kubectl apply -f example-workloads.yaml`
 - `kubectl proxy svc/grafana -n valence-system &`
 - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
 - Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
 
-## Suggested On-boarding
-In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will allow you to gain a comfortable level and understanding of the configuration options of Valence, before going into Live mode where  Valence takes control of your deployments resourcing and scaling on your behalf.
+## How to get started
+In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
  
 **Step 1 - Installation:**
-Follow the installation instructions below (full support from the Valence team will be available)
+Follow the installation instructions below (full support from the Valence team will be available @ dom@valence.net)
  
 **Step 2 - Recommendation Mode:**
 Pick a few deployments you’d like to see recommendations being made on and write SLO manifests for them.
@@ -240,12 +244,8 @@ If you want to test out valence on example workloads we have provided examples m
 The workloads for testing are:
 - todo-backend-django (this is a control workload not using valence)
 - todo-backend-django-valence
-- todo-backend-express
-- todo-backend-golang
-- todo-backend-java
 
-They will use two different SLO manifests:
-- slo-microservices
+They will use the following SLO manifests:
 - slo-webapps
 
 Want to get started quickly with example workloads?
