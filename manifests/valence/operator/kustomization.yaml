@@ -9,4 +9,4 @@ resources:
   - namespace.yaml
 imageTags:
   - name: valencenet/valence
-    newTag: 0.2.0
+    newTag: 0.2.1
