@@ -1,0 +1,6 @@
+commonLabels:
+  app: todo-backend-django-valence
+resources:
+  - deployment.yaml
+  - service.yaml
+  - workload.yaml

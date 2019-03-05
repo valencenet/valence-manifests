@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: optimization-operator
+spec:
+  type: NodePort
+  ports:
+  - name: prometheus
+    port: 8080
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: valence

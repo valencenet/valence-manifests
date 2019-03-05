@@ -1,0 +1,8 @@
+commonLabels:
+  app.kubernetes.io/part-of: valence
+  app.kubernetes.io/version: 0.1.14
+namespace: valence-system
+bases:
+  - ./grafana
+  - ./prometheus
+  - ./operator

@@ -1,0 +1,8 @@
+commonLabels:
+  app.kubernetes.io/name: prometheus-valence
+resources:
+  - config-map.yaml
+  - prometheus-service-accounts.yaml
+  - service.yaml
+  - stateful-set.yaml
+

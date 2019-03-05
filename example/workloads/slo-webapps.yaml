@@ -1,0 +1,13 @@
+apiVersion: optimizer.valence.io/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: slo-webapps
+spec:
+  selector:
+    slo: slo-webapps
+  objectives:
+    - type: HTTP
+      http:
+        latency:
+          percentile: 99
+          responseTime: 100ms

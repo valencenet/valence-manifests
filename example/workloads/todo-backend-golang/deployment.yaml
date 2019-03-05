@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-golang
+  labels:
+    app: todo-backend-golang
+    slo: slo-microservices
+    prometheus: valence
+  annotations:
+    valence.io/optimizer.configure: "true"
+spec:
+  revisionHistoryLimit: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: todo-backend-golang
+        slo: slo-microservices
+    spec:
+      containers:
+      - name: prometheus-proxy
+        image: valencenet/prometheus-proxy:0.2.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - start
+        resources:
+          requests:
+            cpu: 100m
+      - image: manifoldco/todo-backend-golang:latest
+        imagePullPolicy: IfNotPresent
+        name: todo-backend-golang
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
+        env:
+        - name: PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /todos
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 30

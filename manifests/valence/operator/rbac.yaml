@@ -1,0 +1,46 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: valence:optimization-operator
+rules:
+  - apiGroups: ["extensions"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources:
+    - pods
+    - events
+    - nodes
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["optimizer.valence.io"]
+    resources: ["servicelevelobjectives"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["*"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: valence:optimization-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: valence:optimization-operator
+subjects:
+  - name: valence-operator
+    namespace: valence-system
+    kind: ServiceAccount
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: valence-operator
+  namespace: valence-system

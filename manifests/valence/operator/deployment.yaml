@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: optimization-operator
+spec:
+  replicas: 1
+  template:
+    spec:
+      serviceAccountName: valence-operator
+      containers:
+        - name: optimization-operator
+          image: valencenet/valence:0.0.0
+          imagePullPolicy: Always
+          args:
+          - operator
+          env:
+            - name: MIN_SAMPLE_SIZE
+              value: "20"
+            - name: PROMETHEUS_URL
+              value: http://prometheus-valence.valence-system.svc:9090
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500M
+            requests:
+              cpu: 250m
+              memory: 250M

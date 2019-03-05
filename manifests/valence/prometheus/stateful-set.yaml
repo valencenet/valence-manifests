@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus-valence
+  namespace: valence-system
+spec:
+  volumeClaimTemplates: []
+  replicas: 1
+  serviceName: prometheus-valence
+  template:
+    spec:
+      serviceAccountName: prometheus-valence
+      containers:
+      - name: prometheus
+        args:
+        - --web.console.templates=/etc/prometheus/consoles
+        - --web.console.libraries=/etc/prometheus/console_libraries
+        - --config.file=/etc/prometheus/prometheus.yaml
+        - --storage.tsdb.path=/prometheus
+        - --web.enable-lifecycle
+        - --storage.tsdb.no-lockfile
+        - --web.route-prefix=/
+        - --storage.tsdb.retention.time=6h
+        image: quay.io/prometheus/prometheus:v2.7.1
+        ports:
+        - name: web
+          containerPort: 9090
+        resources:
+          limits:
+            cpu: 250m
+            memory: 2.5Gi
+          requests:
+            cpu: 100m
+            memory: 2Gi
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+        - name: rules-volume
+          mountPath: /etc/prometheus-rules
+        - mountPath: /prometheus
+          name: prometheus-valence-db
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-valence
+      - name: rules-volume
+        emptyDir: {}
+      - emptyDir: {}
+        name: prometheus-valence-db
+

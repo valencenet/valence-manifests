@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    spec:
+      containers:
+      - image: grafana/grafana:0.0.0
+        name: grafana
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+          - name: GF_SERVER_ROOT_URL
+            value: /api/v1/namespaces/valence-system/services/grafana/proxy/
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: data
+        - mountPath: /etc/grafana/provisioning/dashboards
+          name: providers
+        - mountPath: /etc/grafana/provisioning/datasources
+          name: datasources
+        - mountPath: /var/lib/grafana/dashboards/capacity-planning.json
+          name: dashboards-valence
+          subPath: valence.json
+      restartPolicy: Always
+      volumes:
+      - emptyDir: {}
+        name: data
+      - name: providers
+        configMap:
+          name: grafana-providers
+      - name: datasources
+        configMap:
+          name: grafana-datasources
+      - name: dashboards-valence
+        configMap:
+          name: grafana-dashboards-valence

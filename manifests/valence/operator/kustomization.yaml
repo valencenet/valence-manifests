@@ -1,0 +1,12 @@
+commonLabels:
+  app.kubernetes.io/name: valence
+  app.kubernetes.io/component: operator
+resources:
+  - crds.yaml
+  - rbac.yaml
+  - deployment.yaml
+  - service.yaml
+  - namespace.yaml
+imageTags:
+  - name: valencenet/valence
+    newTag: 0.2.0

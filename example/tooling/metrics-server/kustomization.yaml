@@ -1,0 +1,10 @@
+resources:
+  - api-service.yaml
+  - auth-delegator.yaml
+  - auth-reader.yaml
+  - deployment.yaml
+  - resource-reader.yaml
+  - service.yaml
+imageTags:
+  - name: gcr.io/google_containers/metrics-server-amd64
+    newTag: v0.2.1

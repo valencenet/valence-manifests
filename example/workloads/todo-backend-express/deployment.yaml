@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-express
+  labels:
+    app: todo-backend-express
+    slo: slo-webapps
+  annotations:
+    valence.io/optimizer.configure: "true"
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: todo-backend-express
+        slo: slo-webapps
+    spec:
+      containers:
+      - name: prometheus-proxy
+        image: valencenet/prometheus-proxy:0.2.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - start
+        resources:
+          requests:
+            cpu: 100m
+      - image: manifoldco/todo-backend-express:latest
+        imagePullPolicy: IfNotPresent
+        name: todo-backend-express
+        command: ["/bin/sh"]
+        args: ["-c", "sleep 60; node node_modules/db-migrate/bin/db-migrate up; node server.js"]
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
+        env:
+          - name: PORT
+            value: "8080"
+          - name: DATABASE_URL
+            value: postgres://postgres@postgres.default:5432
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 30

@@ -1,0 +1,632 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-valence
+data:
+  valence.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": 1,
+      "iteration": 1551793537194,
+      "links": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "-- Mixed --",
+          "description": "Recommendations of Memory requests and limits to set for $deployment",
+          "fill": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 2,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(container_memory_working_set_bytes{container_name=\"$deployment\"})",
+              "format": "time_series",
+              "instant": false,
+              "interval": "5s",
+              "intervalFactor": 1,
+              "legendFormat": "Observed Memory Value",
+              "refId": "A"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(valence_recommendations_memory_requests{container_name=\"$deployment\"})",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "Recommended Memory Request",
+              "refId": "B"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(valence_recommendations_memory_limits{container_name=\"$deployment\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "Recommended Memory Limit",
+              "refId": "C"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(kube_pod_container_resource_requests_memory_bytes{container=\"$deployment\"})",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Requests",
+              "refId": "D"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(kube_pod_container_resource_limits_memory_bytes{container=\"$deployment\"})",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Limits",
+              "refId": "E"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Memory recommendations: $deployment",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": "Memory",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "-- Mixed --",
+          "description": "Recommendations of CPU requests and limits to set for $deployment",
+          "fill": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 8
+          },
+          "id": 4,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "avg(rate(container_cpu_usage_seconds_total{container_name=\"$deployment\"}[5m]))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "5s",
+              "intervalFactor": 1,
+              "legendFormat": "Observed CPU Value",
+              "refId": "A"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(valence_recommendations_cpu_requests{container_name=\"$deployment\"} / 1000)",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "Recommended CPU Request",
+              "refId": "B"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(valence_recommendations_cpu_limits{container_name=\"$deployment\"} / 1000)",
+              "format": "time_series",
+              "hide": false,
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "Recommended CPU Limit",
+              "refId": "C"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(kube_pod_container_resource_requests_cpu_cores{container=\"$deployment\"})",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Requests",
+              "refId": "D"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "max(kube_pod_container_resource_limits_cpu_cores{container=\"$deployment\"})",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Limits",
+              "refId": "E"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Cpu recommendations: $deployment",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "CPU",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "DS_PROM_VALENCE",
+          "fill": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 6,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(increase(promproxy_metric_handler_detailed_requests_count{service=\"$deployment\"}[1m])) / 60",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "HTTP Queries Per Second",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "HTTP Request Count: $deployment",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "QpS",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "DS_PROM_VALENCE",
+          "fill": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "id": 7,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "avg(rate(promproxy_metric_handler_detailed_requests{service=\"$deployment\", quantile=\"$LatencyPercentile\", code!=\"502\"}[5m]))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "HTTP Request Latency",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "HTTP Request Latency: $deployment",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "-- Mixed --",
+          "description": "Number of replicas observed and recommended for: $deployment",
+          "fill": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 32
+          },
+          "id": 9,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "valence_recommendations_replicas{name=\"$deployment\"}",
+              "format": "time_series",
+              "hide": false,
+              "intervalFactor": 1,
+              "legendFormat": "Recommended Replicas",
+              "refId": "A"
+            },
+            {
+              "datasource": "DS_PROM_VALENCE",
+              "expr": "kube_deployment_status_replicas_available{deployment=\"$deployment\"}",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Current Replicas",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Replicas: $deployment",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": null,
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "refresh": "5s",
+      "schemaVersion": 16,
+      "style": "dark",
+      "tags": [],
+      "templating": {
+        "list": [
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "todo-backend-java",
+              "value": "todo-backend-java"
+            },
+            "datasource": "DS_PROM_VALENCE",
+            "hide": 0,
+            "includeAll": false,
+            "label": "Deployment",
+            "multi": false,
+            "name": "deployment",
+            "options": [],
+            "query": "label_values(promproxy_metric_handler_detailed_requests, service)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {
+              "selected": true,
+              "text": "0.95",
+              "value": "0.95"
+            },
+            "datasource": "DS_PROM_VALENCE",
+            "hide": 0,
+            "includeAll": false,
+            "label": "Latency Percentile",
+            "multi": false,
+            "name": "LatencyPercentile",
+            "options": [],
+            "query": "label_values(promproxy_metric_handler_detailed_requests, quantile)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          }
+        ]
+      },
+      "time": {
+        "from": "now-5m",
+        "to": "now"
+      },
+      "timepicker": {
+        "refresh_intervals": [
+          "1s",
+          "5s",
+          "30s",
+          "1m"
+        ],
+        "time_options": [
+          "5m",
+          "15m",
+          "1h",
+          "6h",
+          "12h",
+          "24h",
+          "2d",
+          "7d",
+          "30d"
+        ]
+      },
+      "timezone": "",
+      "title": "Valence",
+      "uid": "9ri9X0Qiz",
+      "version": 1
+    }

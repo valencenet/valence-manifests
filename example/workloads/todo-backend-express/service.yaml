@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-backend-express
+  labels:
+    app.kubernetes.io/managed-by: valence
+spec:
+  type: NodePort
+  ports:
+  - name: headless
+    port: 80
+    targetPort: 8081
+  - name: prometheus
+    port: 8181
+    targetPort: 8181
+  selector:
+    app: todo-backend-express

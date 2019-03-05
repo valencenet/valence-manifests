@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: majin-todo-backend-golang
+spec:
+  template:
+    spec:
+      containers:
+      - name: majin
+        image: valencenet/majin:0.2.0
+        args:
+        - attack
+        - --random
+        - "true"
+        - --base-load
+        - "50"
+        - --period
+        - "3600"
+        - --noise
+        - "100"
+        - --duration
+        - "3600"
+        - --burst-frequency
+        - "100"
+        - --burst-index
+        - "10"
+        - --burst-duration
+        - "600"
+        env:
+        - name: TARGET
+          value: http://todo-backend-golang.default/todos
+      restartPolicy: OnFailure

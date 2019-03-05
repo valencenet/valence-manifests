@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-java
+  labels:
+    app: todo-backend-java
+    slo: slo-webapps
+  annotations:
+    valence.io/optimizer.configure: "true"
+spec:
+  revisionHistoryLimit: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: todo-backend-java
+        slo: slo-webapps
+    spec:
+      containers:
+      - name: prometheus-proxy
+        image: valencenet/prometheus-proxy:0.2.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TARGET_ADDRESS
+          value: "http://127.0.0.1:80"
+        args:
+          - start
+        resources:
+          requests:
+            cpu: 100m
+      - image: manifoldco/todo-backend-java:latest
+        imagePullPolicy: IfNotPresent
+        name: todo-backend-java
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
+        env:
+        - name: PORT
+          value: "80"
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /todos
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 30

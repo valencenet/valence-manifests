@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-django-valence
+  labels:
+    app: todo-backend-django-valence
+    slo: slo-webapps
+  annotations:
+    valence.io/optimizer.configure: "true"
+spec:
+  revisionHistoryLimit: 1
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: todo-backend-django-valence
+        slo: slo-webapps
+        prometheus: valence
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: prometheus-proxy
+        image: valencenet/prometheus-proxy:0.2.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TARGET_ADDRESS
+          value: "http://127.0.0.1:8000"
+        args:
+          - start
+        resources:
+          requests:
+            cpu: 100m
+      - image: manifoldco/todo-backend-django:latest
+        imagePullPolicy: IfNotPresent
+        name: todo-backend-django-valence
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
+        env:
+        - name: PORT
+          value: "8000"
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /todos
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 60
+          timeoutSeconds: 30
+          failureThreshold: 30
