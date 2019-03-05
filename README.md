@@ -239,7 +239,7 @@ You will see:
 
 ## Example Workloads
 
-If you want to test out valence on example workloads we have provided examples manifests that you can use. We generate synthetic workloads using our realistic workload generation tool Majin (see the workload.yaml files). See the `example/workloads dir for more details`.
+If you want to test out valence on example workloads we have provided examples manifests that you can use. We generate synthetic workloads using our realistic workload generation tool Majin (see the workload.yaml files). See the `example/workloads` dir for more details.
 
 The workloads for testing are:
 - todo-backend-django (this is a control workload not using valence)
