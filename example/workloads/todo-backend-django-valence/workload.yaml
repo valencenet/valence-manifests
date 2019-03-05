@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: majin
-        image: valencenet/majin:0.2.0
+        image: valencenet/majin:0.2.1
         args:
         - attack
         - --random

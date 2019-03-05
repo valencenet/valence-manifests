@@ -123,7 +123,7 @@ Add the proxy container to your deployment and set the target address to where y
     spec:
       containers:
       - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.1.14
+        image: valencenet/prometheus-proxy:0.2.1
         imagePullPolicy: IfNotPresent
         env:
         - name: TARGET_ADDRESS
