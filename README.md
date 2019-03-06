@@ -1,10 +1,12 @@
 # Valence 🚀🤖
 
+![how it works](./how-it-works.svg)
+
 ## Introduction
-Valence is a cost and performance management operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives.  It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence acts as a bidirectional pod autoscaling solution and/or intelligent right sizing solution in order to ensure maximum utility of your cluster without performance degredation.
+Valence is an autoscaler operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives. It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence manages bidirectional pod autoscaling in order to ensure maximum utility of your cluster without performance degredation. Valence is **not a replacement of Vertical Pod or Horizontal Pod Autoscalers** but an operator that reconciles the two and will autoconfigures them based on application behaviour.
  
 ## How it works
-Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use(such as HTTP Requests).
+Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP Requests).
 
 ## TOC
 1) [How to get started](#how-to-get-started)
@@ -23,6 +25,7 @@ Valence is based on the notion of Declarative Performance. We believe you should
 
 ## How to get started
 In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
+**Note: Valence is currently limited to managing 5 deployments without a license key. If you'd like a beta license key contact dom@valence.net**
  
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ dom@valence.net)
@@ -112,6 +115,20 @@ metadata:
         app: todo-backend-django
         slo: slo-microservices
 ```
+
+**Note: Valence will make relatively frequent changes so we recommend you ensure at least the following availability configuration for your deployments:**
+
+```
+spec:
+  # Revision history limit should be low but # greater than 1.
+  revisionHistoryLimit: 2
+  strategy:
+    # Ensure we use rolling updates with:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+```
+It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
 **3) Add the prometheus-proxy container to the deployment and modify the service to include prometheus.**
 
