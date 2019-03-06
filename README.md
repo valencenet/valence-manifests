@@ -1,10 +1,10 @@
 # Valence 🚀🤖
 
-![how it works](./how-it-works.svg)
+![how it works](./how-it-works.jpg)
 
 ## Introduction
 Valence is an autoscaler operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives. It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence manages bidirectional pod autoscaling in order to ensure maximum utility of your cluster without performance degredation. Valence is **not a replacement of Vertical Pod or Horizontal Pod Autoscalers** but an operator that reconciles the two and will autoconfigures them based on application behaviour.
- 
+
 ## How it works
 Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP Requests).
 
@@ -26,15 +26,15 @@ Valence is based on the notion of Declarative Performance. We believe you should
 ## How to get started
 In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
 **Note: Valence is currently limited to managing 5 deployments without a license key. If you'd like a beta license key contact dom@valence.net**
- 
+
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ dom@valence.net)
- 
+
 **Step 2 - Recommendation Mode:**
 Pick a few deployments you’d like to see recommendations being made on and write SLO manifests for them.
 We recommend you observe Valence recommendations for a couple days at this point. Please discuss any concerns you may have or feedback with the Valence team as you are observing recommendations. During this period you should manually use those recommendations as you please.
 **Note: our prometheus only retains data for 6 hours so you will have to make your observations accordingly**
- 
+
 **Step 3 - Live Mode, limited deployments:**
 Now we recommend you let Valence take full control of those deployments by [using Valence Annotations](#using-valence-annotations). Again take a couple days to observe how Valence is operating those deployments and direct any feedback to the Valence team.
 
@@ -96,7 +96,7 @@ spec:
           responseTime: 100ms
         # Omit this for autoscaling (ie. latency objective valid for all throughputs).
         # This is throughput of queries per minute.
-        throughput: 500 
+        throughput: 500
 ```
 
 **2) Label the deployment with that SLO:**
@@ -216,12 +216,12 @@ spec:
           # Percentile you'd like your response times to fall under.
           # Valid values are 99, 95, 90, 75, 50.
           percentile: 99
-          # Response time you want your application to meet. 
+          # Response time you want your application to meet.
           responseTime: 100ms
         # The throughput objective you want the latency objective to be valid for.
         # Omit this for throughput scaling (ie. latency objective valid for all throughputs).
         # This is throughput of queries per minute.
-        throughput: 500 
+        throughput: 500
 ```
 
 ## Using Valence Annotations
