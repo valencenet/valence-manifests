@@ -483,17 +483,17 @@ spec:
         - --random
         - "true"
         - --base-load
-        - "50"
+        - "5"
         - --period
         - "3600"
         - --noise
-        - "100"
+        - "25"
         - --duration
         - "3600"
         - --burst-frequency
         - "100"
         - --burst-index
-        - "10"
+        - "20"
         - --burst-duration
         - "600"
         env:
@@ -521,17 +521,17 @@ spec:
         - --random
         - "true"
         - --base-load
-        - "50"
+        - "5"
         - --period
         - "3600"
         - --noise
-        - "100"
+        - "25"
         - --duration
         - "3600"
         - --burst-frequency
         - "100"
         - --burst-index
-        - "10"
+        - "20"
         - --burst-duration
         - "600"
         env:
