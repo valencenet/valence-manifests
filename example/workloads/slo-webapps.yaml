@@ -9,5 +9,5 @@ spec:
     - type: HTTP
       http:
         latency:
-          percentile: 99
-          responseTime: 100ms
+          percentile: 95
+          responseTime: 500ms

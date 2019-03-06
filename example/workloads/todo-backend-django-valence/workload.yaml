@@ -23,7 +23,7 @@ spec:
         - --burst-frequency
         - "100"
         - --burst-index
-        - "20"
+        - "4"
         - --burst-duration
         - "600"
         env:
