@@ -8,11 +8,50 @@ Valence is an autoscaler operator for Kubernetes for right sizing and autoscalin
 ## How it works
 Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP Requests).
 
+## Declarative Performance: The Service Level Objective Manifest
+
+Like Kubernetes goes and figures out how to get a Deployment running with replica sets and pods and has a controller figuring out how to maintain the declared state of the Deployment, Valence goes and figures out how to maintain, and continue to maintain, the declared performance with ServiceLevelObjective manifests.
+
+Use these [ServiceLevelObjective](./example/workloads/slo-webapps.yaml) manifests to manage your applications performance, right sizing, and autoscaling instead of setting all that up manually. This is the main interface for Operators to use Valence.
+
+**What if I don't have SLOs for my application!!**
+Most people don't have formal SLOs ([read more here](https://landing.google.com/sre/sre-book/chapters/service-level-objectives/)) that they have built tooling around for monitoring let alone management by them. We see this as a chance to start using them. They are a great abstraction for declaring the core performance requirements of your application which you will have even if you don't have formal SLOs.
+
+```
+apiVersion: optimizer.valence.io/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: slo-webapps
+spec:
+  # First we define a selector. 
+  # We use this to label deployments to tell Valence to meet the following objectives for those [deployments.](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L7)
+  selector:
+    slo: slo-webapps
+  
+  # Now we declare our objectives. So far we only have HTTP objectives. We are working on a bunch more, let us know if you have ideas.
+  objectives:
+    # The http objective consists of ideal latency for a percentile at a throughput.
+    # Omit throughput if you want to maintain that latency no matter the throughput (ie. autoscaling v. rightsizing)
+    - type: HTTP
+      http:
+        latency:
+          # Valid values are 99, 95, 90, 75, 50.
+          percentile: 99
+          # The ideal response time for that percentile.
+          responseTime: 100ms
+        # This is throughput of queries per minute.
+        # Omit this for autoscaling (ie. latency objective valid for all throughputs).
+        throughput: 500
+```
+
+
 ## TOC
 1) [How to get started](#how-to-get-started)
 2) [Installation](#installation)
 3) [Using Valence](#using-valence)
 4) [Testing Valence with Example Workloads](#example-workloads)
+
+**See example deployment set up in example/workloads**
 
 ## Want to get started quickly with example workloads?
 - start on a fresh cluster such as docker-for-desktop
@@ -45,7 +84,7 @@ Add more deployments for recommendations or management by Valence.
 
 Installing Valence:
 1. [Installing Valence Operator](#installing-valence-operator)
-2. [Preparing Deployments and Services for Operation by Valence](#operating-with-valence)
+2. [Preparing Deployments and Services for Operation by Valence](#preparing-deployments-and-services-for-operation-by-valence)
 3. [Setting SLOs](#setting-slos)
 
 ### Installing Valence Operator
@@ -73,20 +112,24 @@ Components installed in valence-system namespace:
 - Grafana with Valence Dashboards (Valence’s own managed Grafana)
 - Valence Operator
 
-If you need to modify these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install)),
+If you need to modify these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install))
 
-### Operating with Valence
+### Preparing Deployments and Services for Operation by Valence
 There are five steps to operating a deployment with Valence.
 
 **1) Write a SLO for a deployment or group of deployments**
+
+Example: [slo-webapps.yaml](./example/workloads/slo-webapps.yaml)
 ```
 apiVersion: optimizer.valence.io/v1alpha1
 kind: ServiceLevelObjective
 metadata:
-  name: slo-microservices
+  name: slo-webapps
 spec:
+  # First we define a selector. 
+  # We use this to label deployments to tell Valence to meet the following objectives for those [deployments.](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L7)
   selector:
-    slo: slo-microservices
+    slo: slo-webapps
   objectives:
     - type: HTTP
       http:
@@ -100,6 +143,8 @@ spec:
 ```
 
 **2) Label the deployment with that SLO:**
+
+Example: [todo-backend-django/deployment.yaml](./example/workloads/todo-backend-django-valence/deployment.yaml)
 ```
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -107,13 +152,13 @@ metadata:
   name: todo-backend-django
   labels:
     app: todo-backend-django
-    slo: slo-microservices
+    slo: slo-webapps
 ...
   template:
     metadata:
       labels:
         app: todo-backend-django
-        slo: slo-microservices
+        slo: slo-webapps
 ```
 
 **Note: Valence will make relatively frequent changes so we recommend you ensure at least the following availability configuration for your deployments:**
@@ -121,7 +166,7 @@ metadata:
 ```
 spec:
   # Revision history limit should be low but # greater than 1.
-  revisionHistoryLimit: 2
+  revisionHistoryLimit: 3
   strategy:
     # Ensure we use rolling updates with:
     rollingUpdate:
@@ -136,6 +181,7 @@ Valence collects application metrics through a sidecar. If you’d prefer to col
 
 Add the proxy container to your deployment and set the target address to where your application is normally serving.
 
+Example: [todo-backend-django/deployment.yaml](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L15)
 ```
     spec:
       containers:
@@ -149,8 +195,9 @@ Add the proxy container to your deployment and set the target address to where y
           - start
 ```
 
-**4) Label the Service with the Valence proxy collection and replace your existing service with a Valence comptable service.**
+**4) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
 
+Example [todo-backend-django/service.yaml](/Users/domenicrosati/manifold/valence-manifests/example/workloads/todo-backend-django-valence/service.yaml)
 Change:
 ```
 apiVersion: v1
@@ -204,11 +251,11 @@ Example:
 apiVersion: optimizer.valence.io/v1alpha1
 kind: ServiceLevelObjective
 metadata:
-  name: slo-microservices
+  name: slo-webapps
 spec:
   selector:
    # The label you want to select on deployments.
-    slo: slo-microservices
+    slo: slo-webapps
   objectives:
     - type: HTTP
       http:
@@ -225,7 +272,7 @@ spec:
 ```
 
 ## Using Valence Annotations
-These annotations are optional:
+You can use these optional [annotations](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L8) on the deployments managed by Valence:
 ```
   annotations:
     # Whether to make changes automatically with recommendations.
