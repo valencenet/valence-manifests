@@ -10,22 +10,10 @@ spec:
         image: valencenet/majin:0.2.1
         args:
         - attack
-        - --random
-        - "true"
         - --base-load
-        - "5"
+        - "500"
         - --period
-        - "3600"
-        - --noise
-        - "25"
-        - --duration
-        - "3600"
-        - --burst-frequency
-        - "100"
-        - --burst-index
-        - "4"
-        - --burst-duration
-        - "600"
+        - "300"
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos

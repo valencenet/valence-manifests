@@ -340,21 +340,14 @@ metadata:
     slo: slo-webapps
   name: todo-backend-django-valence
 spec:
-  replicas: 2
-  revisionHistoryLimit: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: todo-backend-django-valence
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
   template:
     metadata:
       labels:
         app: todo-backend-django-valence
-        prometheus: valence
-        slo: slo-webapps
     spec:
       containers:
       - args:
@@ -480,22 +473,10 @@ spec:
       containers:
       - args:
         - attack
-        - --random
-        - "true"
         - --base-load
-        - "5"
+        - "500"
         - --period
-        - "3600"
-        - --noise
-        - "25"
-        - --duration
-        - "3600"
-        - --burst-frequency
-        - "100"
-        - --burst-index
-        - "20"
-        - --burst-duration
-        - "600"
+        - "300"
         env:
         - name: TARGET
           value: http://todo-backend-django-valence.default/todos
@@ -518,22 +499,10 @@ spec:
       containers:
       - args:
         - attack
-        - --random
-        - "true"
         - --base-load
-        - "5"
+        - "500"
         - --period
-        - "3600"
-        - --noise
-        - "25"
-        - --duration
-        - "3600"
-        - --burst-frequency
-        - "100"
-        - --burst-index
-        - "20"
-        - --burst-duration
-        - "600"
+        - "300"
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos
@@ -549,8 +518,8 @@ spec:
   objectives:
   - http:
       latency:
-        percentile: 99
-        responseTime: 100ms
+        percentile: 95
+        responseTime: 500ms
     type: HTTP
   selector:
     slo: slo-webapps
