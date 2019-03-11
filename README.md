@@ -282,6 +282,7 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
     # Minimum cpu requests to recommend.
     valence.io/optimizer.min-cpu-requests: "100m"
     # Minimum memory requests to recommend.
+    # Set this to your max heap size if you are using JVM.
     valence.io/optimizer.min-memory-requests: "500M"
 ```
 
