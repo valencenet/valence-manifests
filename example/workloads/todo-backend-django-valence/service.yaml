@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: todo-backend-django-valence
   labels:
-    app.kubernetes.io/managed-by: valence
+    valence.net/prometheus: "true"
 spec:
   type: NodePort
   ports:

@@ -223,8 +223,8 @@ metadata:
   name: todo-backend-django
   labels:
     service: todo-backend-django
-    # scrape promehteus metrics by valence
-    app.kubernetes.io/managed-by: valence
+    # scrape prometheus metrics by valence
+    valence.net/prometheus: "true"
 spec:
   type: NodePort
   ports:
