@@ -186,7 +186,7 @@ Example: [todo-backend-django/deployment.yaml](https://github.com/valencenet/val
     spec:
       containers:
       - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.1
+        image: valencenet/prometheus-proxy:0.2.2
         imagePullPolicy: IfNotPresent
         env:
         - name: TARGET_ADDRESS
