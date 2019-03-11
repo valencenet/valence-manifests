@@ -231,7 +231,7 @@ kind: Service
 metadata:
   labels:
     app: todo-backend-django-valence
-    app.kubernetes.io/managed-by: valence
+    valence.net/prometheus: "true"
   name: todo-backend-django-valence
 spec:
   ports:
@@ -250,7 +250,7 @@ kind: Service
 metadata:
   labels:
     app: todo-backend-django
-    app.kubernetes.io/managed-by: valence
+    valence.net/prometheus: "true"
   name: todo-backend-django
 spec:
   ports:
