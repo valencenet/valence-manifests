@@ -1,6 +1,6 @@
 commonLabels:
   app.kubernetes.io/part-of: valence
-  app.kubernetes.io/version: 0.2.1
+  app.kubernetes.io/version: 0.2.2
 namespace: valence-system
 bases:
   - ./grafana

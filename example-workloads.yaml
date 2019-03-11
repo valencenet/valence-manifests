@@ -318,7 +318,7 @@ spec:
         - /metrics-server
         - --source=kubernetes.summary_api:''
         - --metric-resolution=5s
-        image: gcr.io/google_containers/metrics-server-amd64:v0.2.1
+        image: gcr.io/google_containers/metrics-server-amd64:v0.2.2
         imagePullPolicy: Always
         name: metrics-server
         resources:
@@ -355,7 +355,7 @@ spec:
         env:
         - name: TARGET_ADDRESS
           value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.1
+        image: valencenet/prometheus-proxy:0.2.2
         imagePullPolicy: IfNotPresent
         name: prometheus-proxy
         resources:
@@ -414,7 +414,7 @@ spec:
         env:
         - name: TARGET_ADDRESS
           value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.1
+        image: valencenet/prometheus-proxy:0.2.2
         imagePullPolicy: IfNotPresent
         name: prometheus-proxy
       - env:
@@ -480,7 +480,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django-valence.default/todos
-        image: valencenet/majin:0.2.1
+        image: valencenet/majin:0.2.2
         name: majin
       restartPolicy: OnFailure
 ---
@@ -506,7 +506,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos
-        image: valencenet/majin:0.2.1
+        image: valencenet/majin:0.2.2
         name: majin
       restartPolicy: OnFailure
 ---
