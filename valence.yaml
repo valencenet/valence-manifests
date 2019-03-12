@@ -31,7 +31,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
   namespace: valence-system
 ---
@@ -52,7 +51,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
 rules:
 - apiGroups:
@@ -138,7 +136,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -801,7 +798,6 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: grafana-dashboards-valence
   namespace: valence-system
 ---
@@ -821,7 +817,6 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: grafana-datasources
   namespace: valence-system
 ---
@@ -841,7 +836,6 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: grafana-providers
   namespace: valence-system
 ---
@@ -1157,7 +1151,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
   namespace: valence-system
 ---
@@ -1167,7 +1160,6 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: grafana
   namespace: valence-system
 spec:
@@ -1178,7 +1170,6 @@ spec:
   selector:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   type: NodePort
 ---
 apiVersion: v1
@@ -1209,7 +1200,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
   namespace: valence-system
 spec:
@@ -1221,7 +1211,6 @@ spec:
   selector:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   type: NodePort
 ---
 apiVersion: extensions/v1beta1
@@ -1230,7 +1219,6 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: grafana
   namespace: valence-system
 spec:
@@ -1239,7 +1227,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: grafana
       app.kubernetes.io/part-of: valence
-      app.kubernetes.io/version: 0.2.2
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -1250,7 +1237,6 @@ spec:
       labels:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/part-of: valence
-        app.kubernetes.io/version: 0.2.2
     spec:
       containers:
       - env:
@@ -1344,7 +1330,6 @@ metadata:
   labels:
     app.kubernetes.io/name: prometheus-valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.2
   name: prometheus-valence
   namespace: valence-system
 spec:
@@ -1353,14 +1338,12 @@ spec:
     matchLabels:
       app.kubernetes.io/name: prometheus-valence
       app.kubernetes.io/part-of: valence
-      app.kubernetes.io/version: 0.2.2
   serviceName: prometheus-valence
   template:
     metadata:
       labels:
         app.kubernetes.io/name: prometheus-valence
         app.kubernetes.io/part-of: valence
-        app.kubernetes.io/version: 0.2.2
     spec:
       containers:
       - args:

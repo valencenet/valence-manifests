@@ -1,6 +1,7 @@
 commonLabels:
   app.kubernetes.io/name: valence
   app.kubernetes.io/component: operator
+  app.kubernetes.io/version: 0.2.2
 resources:
   - crds.yaml
   - rbac.yaml
