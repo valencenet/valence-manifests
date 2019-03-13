@@ -12,7 +12,7 @@ Valence is based on the notion of Declarative Performance. We believe you should
 
 Like Kubernetes goes and figures out how to get a Deployment running with replica sets and pods and has a controller figuring out how to maintain the declared state of the Deployment, Valence goes and figures out how to maintain, and continue to maintain, the declared performance with ServiceLevelObjective manifests.
 
-Use these [ServiceLevelObjective](./example/workloads/slo-webapps.yaml) manifests to manage your applications performance, right sizing, and autoscaling instead of setting all that up manually. This is the main interface for Operators to use Valence.
+Use these [ServiceLevelObjective](./example/workloads/slo-webapps.yaml) objects to manage your applications performance, right sizing, and autoscaling instead of setting all that up manually. This is the main interface for Operators to use Valence.
 
 **What if I don't have SLOs for my application!!**
 Most people don't have formal SLOs ([read more here](https://landing.google.com/sre/sre-book/chapters/service-level-objectives/)) that they have built tooling around for monitoring let alone management by them. We see this as a chance to start using them. They are a great abstraction for declaring the core performance requirements of your application which you will have even if you don't have formal SLOs.
@@ -56,10 +56,11 @@ spec:
 ## Want to get started quickly with example workloads?
 - start on a fresh cluster such as docker-for-desktop
 - if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectly apply -f valence.yaml`
+- `kubectl apply -f valence.yaml`
 - `kubectl apply -f example-workloads.yaml`
 - `kubectl proxy svc/grafana -n valence-system &`
 - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+- Authentication is Grafana Default: username: admin, password: admin
 - Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
 
 ## How to get started
@@ -94,9 +95,14 @@ Valence is an operator that lives in its own namespace with all the tools it nee
 
 You will need to have the following components installed to use Valence.
 If you don't have these, you can take a look at the tooling manifests for examples.
+
 **Prerequests:**
 - [metrics-server](https://github.com/kubernetes-incubator/metrics-server)
-- [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
+- Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following serivce label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
+- Ensure the following metrics from kube-state-metrics are available: kube_pod_container_resource_requests_memory_byte, kube_pod_container_resource_limits_memory_bytes, kube_pod_container_resource_requests_cpu_cores,
+kube_pod_container_resource_limits_cpu_cores,
+kube_deployment_status_replicas_available
+
 
 Valence can be installed by applying the valence.yaml you will find in the valence repo.
 ```
@@ -112,7 +118,7 @@ Components installed in valence-system namespace:
 - Grafana with Valence Dashboards (Valence’s own managed Grafana)
 - Valence Operator
 
-If you need to modify these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install))
+If you need to **modify** these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install))
 
 ### Preparing Deployments and Services for Operation by Valence
 There are five steps to operating a deployment with Valence.
@@ -142,7 +148,11 @@ spec:
         throughput: 500
 ```
 
-**2) Label the deployment with that SLO:**
+**2) Label the deployment with that SLO and add Prometheus Proxy:**
+
+Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated,  all feedback is appreciated!
+
+Add the proxy container to your deployment and set the target address to where your application is normally serving.
 
 Example: [todo-backend-django/deployment.yaml](./example/workloads/todo-backend-django-valence/deployment.yaml)
 ```
@@ -159,6 +169,18 @@ metadata:
       labels:
         app: todo-backend-django
         slo: slo-webapps
+...
+    spec:
+      containers:
+      - name: prometheus-proxy
+        image: valencenet/prometheus-proxy:0.2.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TARGET_ADDRESS
+          value: "http://127.0.0.1:8000" # where your app is serving on
+        args:
+          - start
+...
 ```
 
 **Note: Valence will make relatively frequent changes so we recommend you ensure at least the following availability configuration for your deployments:**
@@ -175,27 +197,7 @@ spec:
 ```
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
-**3) Add the prometheus-proxy container to the deployment and modify the service to include prometheus.**
-
-Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated,  all feedback is appreciated!
-
-Add the proxy container to your deployment and set the target address to where your application is normally serving.
-
-Example: [todo-backend-django/deployment.yaml](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L15)
-```
-    spec:
-      containers:
-      - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.2
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TARGET_ADDRESS
-          value: "http://127.0.0.1:8000" # where your app is serving on
-        args:
-          - start
-```
-
-**4) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
+**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
 
 Example [todo-backend-django/service.yaml](/Users/domenicrosati/manifold/valence-manifests/example/workloads/todo-backend-django-valence/service.yaml)
 Change:
@@ -207,9 +209,10 @@ metadata:
     service: todo-backend-django
   name: todo-backend-django
 spec:
+  # Works with any service type, NodePort just an example.
   type: NodePort
   ports:
-  - name: headless
+  - name: headless # example port name
     port: 80
     targetPort: 8080
   selector:
@@ -223,14 +226,16 @@ metadata:
   name: todo-backend-django
   labels:
     service: todo-backend-django
-    # scrape prometheus metrics by valence
+    # Scrape prometheus metrics by valence.
     valence.net/prometheus: "true"
 spec:
   type: NodePort
   ports:
-  - name: headless
+  # This would be your port you were exposing your application on.
+  - name: headless # this name is arbitrary and can be changed to anything you want.
     port: 80
     targetPort: 8081 # this is the port prometheus-proxy is serving on
+  # These three lines allow us to scrape application metrics.
   - name: prometheus
     port: 8181
     targetPort: 8181
@@ -288,11 +293,30 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
 
 ## Viewing Valence Recommendations and Changes
 
+### Recommendations
+
+The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8181 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way. 
+
+We expose the following metrics:
+- valence_recommendations_cpu_limits
+- valence_recommendations_cpu_requests
+- valence_recommendations_memory_limits
+- valence_recommendations_memory_requests
+- valence_recommendations_replicas
+
+For a example of how we scrape these recommendations for our own local prometheus see [config-map](manifests/valence/prometheus/config-map.yaml#L255) . Here we scrape on the following label: `app.kubernetes.io/component: operator`
+
+
+### Grafana
+
 Open Grafana
 ```
 kubectl proxy svc/grafana -n valence-system
 open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy
 ```
+Authentication is Grafana Default:
+- username: admin
+- password: admin
 
 Once you are in Grafana look at the Valence Recommendations dashboard.
 You will see:
@@ -316,7 +340,8 @@ They will use the following SLO manifests:
 Want to get started quickly with example workloads?
 - start on a fresh cluster such as docker-for-desktop
 - if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectly apply -f valence.yaml -f example-workloads.yaml`
+- `kubectl apply -f valence.yaml -f example-workloads.yaml`
 - `kubectl proxy svc/grafana -n valence-system &`
 - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+- Authentication is Grafana Default: username: admin, password: admin
 - Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
