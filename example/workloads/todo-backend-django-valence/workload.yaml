@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: majin
-        image: valencenet/majin:0.2.2
+        image: valencenet/majin:0.2.3
         args:
         - attack
         - --base-load
