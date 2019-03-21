@@ -2,6 +2,13 @@
 
 ![how it works](./how-it-works.jpg)
 
+## TOC
+1) [Introduction](#introduction)
+2) [How to get started](#how-to-get-started)
+3) [Installation](#installation)
+4) [Using Valence](#using-valence)
+5) [Testing Valence with Example Workloads](#example-workloads)
+
 ## Introduction
 [Valence](https://valence.net/?utm_source=github&utm_medium=referral) is an autoscaler operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives. It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence manages bidirectional pod autoscaling in order to ensure maximum utility of your cluster without performance degredation. Valence is **not a replacement of Vertical Pod or Horizontal Pod Autoscalers but an operator that reconciles the two** and will autoconfigure them based on application behaviour.
 
@@ -43,13 +50,6 @@ spec:
         # Omit this for autoscaling (ie. latency objective valid for all throughputs).
         throughput: 500
 ```
-
-
-## TOC
-1) [How to get started](#how-to-get-started)
-2) [Installation](#installation)
-3) [Using Valence](#using-valence)
-4) [Testing Valence with Example Workloads](#example-workloads)
 
 **See example deployment set up in example/workloads**
 
