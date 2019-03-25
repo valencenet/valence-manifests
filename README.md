@@ -295,7 +295,11 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
 
 ### Recommendations
 
-The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8181 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way. 
+The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8080 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way.  The metrics can be accessed like:
+```
+kubectl port-forward svc/optimization-operator -n valence-system 8080 &
+open http://localhost:8080/metrics
+```
 
 We expose the following metrics:
 - valence_recommendations_cpu_limits
