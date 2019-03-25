@@ -340,10 +340,15 @@ metadata:
     slo: slo-webapps
   name: todo-backend-django-valence
 spec:
-  revisionHistoryLimit: 2
+  replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: todo-backend-django-valence
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -396,6 +401,7 @@ metadata:
   name: todo-backend-django
 spec:
   replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: todo-backend-django

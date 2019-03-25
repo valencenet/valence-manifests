@@ -353,7 +353,7 @@ data:
           "targets": [
             {
               "datasource": "DS_PROM_VALENCE",
-              "expr": "avg(rate(container_cpu_usage_seconds_total{container_name=\"$deployment\"}[5m]))",
+              "expr": "avg(rate(container_cpu_usage_seconds_total{container_name=\"$deployment\"}[2m]))",
               "format": "time_series",
               "instant": false,
               "interval": "5s",
@@ -563,7 +563,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(promproxy_metric_handler_detailed_requests{service=\"$deployment\", quantile=\"$LatencyPercentile\", code!=\"502\"}[5m]))",
+              "expr": "avg(rate(promproxy_metric_handler_detailed_requests{service=\"$deployment\", quantile=\"$LatencyPercentile\", code!=\"502\"}[1m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
