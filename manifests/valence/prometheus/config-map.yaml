@@ -22,6 +22,10 @@ data:
       bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
       tls_config:
         insecure_skip_verify: true
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: (?i)(kube_pod_container_resource_requests_memory_bytes|kube_pod_container_resource_limits_memory_bytes|kube_pod_container_resource_requests_cpu_cores|kube_pod_container_resource_limits_cpu_cores|kube_deployment_status_replicas_available)
+        action: keep
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_app]
         separator: ;
@@ -88,6 +92,10 @@ data:
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         insecure_skip_verify: true
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: (?i)(container_memory_working_set_bytes|container_cpu_usage_seconds_total)
+        action: keep
       relabel_configs:
       - separator: ;
         regex: __meta_kubernetes_node_label_(.+)
@@ -111,6 +119,10 @@ data:
       scheme: http
       kubernetes_sd_configs:
       - role: endpoints
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: (?i)(promproxy_metric_handler_detailed_requests_count|promproxy_metric_handler_detailed_requests)
+        action: keep
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_valence_net_prometheus]
         separator: ;
@@ -167,6 +179,10 @@ data:
         namespaces:
           names:
           - valence-system
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: (?i)(valence_recommendations_memory_requests|valence_recommendations_memory_limits|valence_recommendations_cpu_requests|valence_recommendations_cpu_limits|valence_recommendations_replicas)
+        action: keep
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_component]
         separator: ;
