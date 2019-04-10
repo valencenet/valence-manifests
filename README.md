@@ -173,7 +173,7 @@ metadata:
     spec:
       containers:
       - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.5
+        image: valencenet/prometheus-proxy:0.2.6
         imagePullPolicy: IfNotPresent
         env:
         - name: TARGET_ADDRESS
