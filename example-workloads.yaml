@@ -360,7 +360,7 @@ spec:
         env:
         - name: TARGET_ADDRESS
           value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.6
+        image: valencenet/prometheus-proxy:0.2.7
         imagePullPolicy: IfNotPresent
         name: prometheus-proxy
         resources:
@@ -420,7 +420,7 @@ spec:
         env:
         - name: TARGET_ADDRESS
           value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.6
+        image: valencenet/prometheus-proxy:0.2.7
         imagePullPolicy: IfNotPresent
         name: prometheus-proxy
       - env:
@@ -486,7 +486,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django-valence.default/todos
-        image: valencenet/majin:0.2.6
+        image: valencenet/majin:0.2.7
         name: majin
       restartPolicy: OnFailure
 ---
@@ -512,7 +512,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos
-        image: valencenet/majin:0.2.6
+        image: valencenet/majin:0.2.7
         name: majin
       restartPolicy: OnFailure
 ---
