@@ -3,16 +3,19 @@
 ![how it works](./how-it-works.jpg)
 
 ## TOC
-1) [Introduction](#introduction)
-2) [How to get started](#how-to-get-started)
-3) [Installation](#installation)
-4) [Using Valence](#using-valence)
-5) [Testing Valence with Example Workloads](#example-workloads)
+
+1. [Introduction](#introduction)
+2. [How to get started](#how-to-get-started)
+3. [Installation](#installation)
+4. [Using Valence](#using-valence)
+5. [Testing Valence with Example Workloads](#example-workloads)
 
 ## Introduction
+
 [Valence](https://valence.net/?utm_source=github&utm_medium=referral) is an autoscaler operator for Kubernetes for right sizing and autoscaling containers intelligently to meet performance objectives. It learns how applications behave and optimizes resources according to defined Service Level Objectives manifests. Valence manages bidirectional pod autoscaling in order to ensure maximum utility of your cluster without performance degredation. Valence is **not a replacement of Vertical Pod or Horizontal Pod Autoscalers but an operator that reconciles the two** and will autoconfigure them based on application behaviour.
 
 ## How it works
+
 Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP Requests).
 
 ## Declarative Performance: The Service Level Objective Manifest
@@ -30,11 +33,11 @@ kind: ServiceLevelObjective
 metadata:
   name: slo-webapps
 spec:
-  # First we define a selector. 
+  # First we define a selector.
   # We use this to label deployments to tell Valence to meet the following objectives for those [deployments.](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L7)
   selector:
     slo: slo-webapps
-  
+
   # Now we declare our objectives. So far we only have HTTP objectives. We are working on a bunch more, let us know if you have ideas.
   objectives:
     # The http objective consists of ideal latency for a percentile at a throughput.
@@ -54,6 +57,7 @@ spec:
 **See example deployment set up in example/workloads**
 
 ## Want to get started quickly with example workloads?
+
 - start on a fresh cluster such as docker-for-desktop
 - if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
 - `kubectl apply -f valence.yaml`
@@ -64,6 +68,7 @@ spec:
 - Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
 
 ## How to get started
+
 In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
 **Note: Valence is currently limited to managing 5 deployments without a license key. If you'd like a beta license key contact dom@valence.net**
 
@@ -84,6 +89,7 @@ Add more deployments for recommendations or management by Valence.
 ## Installation
 
 Installing Valence:
+
 1. [Installing Valence Operator](#installing-valence-operator)
 2. [Preparing Deployments and Services for Operation by Valence](#preparing-deployments-and-services-for-operation-by-valence)
 3. [Setting SLOs](#setting-slos)
@@ -92,28 +98,31 @@ Installing Valence:
 
 Valence is an operator that lives in its own namespace with all the tools it needs.
 
-
 You will need to have the following components installed to use Valence.
 If you don't have these, you can take a look at the tooling manifests for examples.
 
 **Prerequests:**
+
 - [metrics-server](https://github.com/kubernetes-incubator/metrics-server)
 - Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following serivce label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
 - Ensure the following metrics from kube-state-metrics are available: kube_pod_container_resource_requests_memory_byte, kube_pod_container_resource_limits_memory_bytes, kube_pod_container_resource_requests_cpu_cores,
-kube_pod_container_resource_limits_cpu_cores,
-kube_deployment_status_replicas_available
-
+  kube_pod_container_resource_limits_cpu_cores,
+  kube_deployment_status_replicas_available
 
 Valence can be installed by applying the valence.yaml you will find in the valence repo.
+
 ```
 kubectl apply -f valence.yaml
 ```
+
 Valence can be removed by deleting valence.yaml
+
 ```
 kubectl delete -f valence.yaml
 ```
 
 Components installed in valence-system namespace:
+
 - Prometheus (Valence’s own managed Prometheus)
 - Grafana with Valence Dashboards (Valence’s own managed Grafana)
 - Valence Operator
@@ -121,18 +130,20 @@ Components installed in valence-system namespace:
 If you need to **modify** these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install))
 
 ### Preparing Deployments and Services for Operation by Valence
+
 There are five steps to operating a deployment with Valence.
 
 **1) Write a SLO for a deployment or group of deployments**
 
 Example: [slo-webapps.yaml](./example/workloads/slo-webapps.yaml)
+
 ```
 apiVersion: optimizer.valence.io/v1alpha1
 kind: ServiceLevelObjective
 metadata:
   name: slo-webapps
 spec:
-  # First we define a selector. 
+  # First we define a selector.
   # We use this to label deployments to tell Valence to meet the following objectives for those [deployments.](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L7)
   selector:
     slo: slo-webapps
@@ -150,11 +161,12 @@ spec:
 
 **2) Label the deployment with that SLO and add Prometheus Proxy:**
 
-Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated,  all feedback is appreciated!
+Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
 
 Add the proxy container to your deployment and set the target address to where your application is normally serving.
 
 Example: [todo-backend-django/deployment.yaml](./example/workloads/todo-backend-django-valence/deployment.yaml)
+
 ```
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -173,7 +185,7 @@ metadata:
     spec:
       containers:
       - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.7
+        image: valencenet/prometheus-proxy:0.2.8
         imagePullPolicy: IfNotPresent
         env:
         - name: TARGET_ADDRESS
@@ -195,12 +207,14 @@ spec:
       maxSurge: 1
       maxUnavailable: 0
 ```
+
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
 **3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
 
 Example [todo-backend-django/service.yaml](/Users/domenicrosati/manifold/valence-manifests/example/workloads/todo-backend-django-valence/service.yaml)
 Change:
+
 ```
 apiVersion: v1
 kind: Service
@@ -218,7 +232,9 @@ spec:
   selector:
     app: todo-backend-django
 ```
+
 To:
+
 ```
 apiVersion: v1
 kind: Service
@@ -242,16 +258,20 @@ spec:
   selector:
     app: todo-backend-django
 ```
+
 ## Using Valence
 
 Using Valence:
+
 1. [Using Valence Annotations](#using-valence-annotations)
 2. [Viewing Valence Recommendations and Changes](#viewing-valence-recommendations-and-changes)
 
 ### Setting SLOs
+
 Setting a SLO is done via writing the manifest, applying it, and registering a deployment using the label defined in the slo selector.
 
 Example:
+
 ```
 apiVersion: optimizer.valence.io/v1alpha1
 kind: ServiceLevelObjective
@@ -277,7 +297,9 @@ spec:
 ```
 
 ## Using Valence Annotations
+
 You can use these optional [annotations](https://github.com/valencenet/valence-manifests/blob/master/example/workloads/todo-backend-django-valence/deployment.yaml#L8) on the deployments managed by Valence:
+
 ```
   annotations:
     # Whether to make changes automatically with recommendations.
@@ -295,13 +317,15 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
 
 ### Recommendations
 
-The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8080 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way.  The metrics can be accessed like:
+The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8080 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way. The metrics can be accessed like:
+
 ```
 kubectl port-forward svc/optimization-operator -n valence-system 8080 &
 open http://localhost:8080/metrics
 ```
 
 We expose the following metrics:
+
 - valence_recommendations_cpu_limits
 - valence_recommendations_cpu_requests
 - valence_recommendations_memory_limits
@@ -310,20 +334,23 @@ We expose the following metrics:
 
 For a example of how we scrape these recommendations for our own local prometheus see [config-map](manifests/valence/prometheus/config-map.yaml#L255) . Here we scrape on the following label: `app.kubernetes.io/component: operator`
 
-
 ### Grafana
 
 Open Grafana
+
 ```
 kubectl proxy svc/grafana -n valence-system
 open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy
 ```
+
 Authentication is Grafana Default:
+
 - username: admin
 - password: admin
 
 Once you are in Grafana look at the Valence Recommendations dashboard.
 You will see:
+
 - Memory recommendations and resources
 - CPU recommendations and resources
 - HTTP Request Count in Queries per Second
@@ -335,13 +362,16 @@ You will see:
 If you want to test out valence on example workloads we have provided examples manifests that you can use. We generate synthetic workloads using our realistic workload generation tool Majin (see the workload.yaml files). See the `example/workloads` dir for more details.
 
 The workloads for testing are:
+
 - todo-backend-django (this is a control workload not using valence)
 - todo-backend-django-valence
 
 They will use the following SLO manifests:
+
 - slo-webapps
 
 Want to get started quickly with example workloads?
+
 - start on a fresh cluster such as docker-for-desktop
 - if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
 - `kubectl apply -f valence.yaml -f example-workloads.yaml`
