@@ -104,14 +104,15 @@ If you don't have these, you can take a look at the tooling manifests for exampl
 **Prerequests:**
 
 - [metrics-server](https://github.com/kubernetes-incubator/metrics-server)
-- Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following serivce label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
+- Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following service label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
 - Ensure the following metrics from kube-state-metrics are available: kube_pod_container_resource_requests_memory_byte, kube_pod_container_resource_limits_memory_bytes, kube_pod_container_resource_requests_cpu_cores,
   kube_pod_container_resource_limits_cpu_cores,
   kube_deployment_status_replicas_available
 
-Valence can be installed by applying the valence.yaml you will find in the valence repo.
+Valence can be installed by adding your license key you provisioned during sign up and applying the valence.yaml you will find in the valence repo.
 
 ```
+make valence LICENSE=<YOUR.LICENSE.KEY>
 kubectl apply -f valence.yaml
 ```
 

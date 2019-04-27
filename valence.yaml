@@ -1231,6 +1231,8 @@ spec:
       - args:
         - operator
         env:
+        - name: LICENSE_KEY
+          value: "license-key"
         - name: MIN_SAMPLE_SIZE
           value: "20"
         - name: PROMETHEUS_URL
