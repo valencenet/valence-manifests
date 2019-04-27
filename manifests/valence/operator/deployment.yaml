@@ -12,8 +12,10 @@ spec:
           image: valencenet/valence:0.0.0
           imagePullPolicy: Always
           args:
-          - operator
+            - operator
           env:
+            - name: LICENSE_KEY
+              value: "license-key"
             - name: MIN_SAMPLE_SIZE
               value: "20"
             - name: PROMETHEUS_URL
