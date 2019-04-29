@@ -70,7 +70,6 @@ spec:
 ## How to get started
 
 In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
-**Note: Valence is currently limited to managing 5 deployments without a license key. If you'd like a beta license key contact dom@valence.net**
 
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ dom@valence.net)
