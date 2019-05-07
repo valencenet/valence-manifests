@@ -108,7 +108,18 @@ If you don't have these, you can take a look at the tooling manifests for exampl
   kube_pod_container_resource_limits_cpu_cores,
   kube_deployment_status_replicas_available
 
-Valence can be installed by adding your license key you provisioned during sign up and applying the valence.yaml you will find in the valence repo.
+**Note** These tools are available in tooling if you want to install them from here.
+
+**Valence can be installed:**
+
+- **Free** by adding an email as your license and applying valence.
+
+```
+make valence LICENSE=<YOUR.EMAIL>
+kubectl apply -f valence.yaml
+```
+
+- **Metered** by adding your license key you provisioned through during sign up on manifold and applying valence.
 
 ```
 make valence LICENSE=<YOUR.LICENSE.KEY>
@@ -127,7 +138,7 @@ Components installed in valence-system namespace:
 - Grafana with Valence Dashboards (Valence’s own managed Grafana)
 - Valence Operator
 
-If you need to **modify** these files you can use the make commands to recompile the manifests. (ie. `make valence` (you will need Kustomize `make install-kustomize` to install))
+If you need to **modify** these files you can use the make commands to recompile the manifests. (ie. `make valence`)
 
 ### Preparing Deployments and Services for Operation by Valence
 
