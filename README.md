@@ -69,7 +69,9 @@ spec:
 
 ## How to get started
 
-In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
+In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf. 
+
+Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net 
 
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ info@valence.net)
