@@ -251,8 +251,8 @@ spec:
   strategy:
     # Ensure we use rolling updates with:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 2
+      maxUnavailable: 10%
 ```
 
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
