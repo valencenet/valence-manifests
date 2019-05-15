@@ -183,7 +183,32 @@ spec:
 
 **2) Label the deployment with that SLO and add Prometheus Proxy:**
 
-Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
+#### Selecting SLO
+
+Choose the Deployment(s) you'd like to be operated by that Service Level Objective and Label them accordingly.
+
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-django
+  labels:
+    app: todo-backend-django
+    # Add this as a label to your Deployment to match the selector you defined above.
+    slo: slo-webapps
+...
+  template:
+    metadata:
+      labels:
+        app: todo-backend-django
+        # Add this as a template label to your Deployment to match the selector you defined above.
+        slo: slo-webapps
+...
+```
+
+#### Adding Sidecar
+
+Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers, linkerd, istio or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
 
 Add the proxy container to your deployment and set the target address to where your application is normally serving.
 
@@ -232,7 +257,7 @@ spec:
 
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
-**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
+**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence compatible service.**
 
 Example [todo-backend-django/service.yaml](./example/workloads/todo-backend-django-valence/service.yaml)
 Change:
@@ -331,7 +356,7 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
     # Minimum cpu requests to recommend.
     valence.io/optimizer.min-cpu-requests: "100m"
     # Minimum memory requests to recommend.
-    # Set this to your max heap size if you are using JVM.
+    # For example: set this to your max heap size if you are using JVM.
     valence.io/optimizer.min-memory-requests: "500M"
 ```
 
