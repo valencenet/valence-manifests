@@ -53,8 +53,8 @@ spec:
       app: todo-backend-django-valence
   strategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 2
+      maxUnavailable: 10%
   template:
     metadata:
       labels:
@@ -113,8 +113,8 @@ spec:
       app: todo-backend-django
   strategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 2
+      maxUnavailable: 10%
   template:
     metadata:
       labels:
