@@ -58,20 +58,23 @@ spec:
 
 ## Want to get started quickly with example workloads?
 
-- start on a fresh cluster such as docker-for-desktop
-- if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectl apply -f valence.yaml`
-- `kubectl apply -f example-workloads.yaml`
-- `kubectl proxy svc/grafana -n valence-system &`
-- `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
-- Authentication is Grafana Default: username: admin, password: admin
-- Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
+- start on a fresh cluster such as docker-for-desktop or a testing instance of GKE
+- Clone the Valence repo: `git clone https://github.com/valencenet/valence-manifests`
+- _if your cluster already has metrics-server (GKE does by default)_ run `make tooling-no-ms`
+- Apply the Tooling (Metrics server (if don't have) and Kube-state-metrics): `kubectl apply -f tooling.yaml`
+- Apply the Valence system: `kubectl apply -f valence.yaml`
+- Apply the Example workloads and tooling: `kubectl apply -f example-workloads.yaml`
+- View results!
+- - `kubectl proxy svc/grafana -n valence-system &`
+- - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+    Authentication is Grafana Default: username: admin, password: admin
+    Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
 
 ## How to get started
 
-In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf. 
+In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
 
-Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net 
+Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net
 
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ info@valence.net)
@@ -106,11 +109,17 @@ If you don't have these, you can take a look at the tooling manifests for exampl
 
 - [metrics-server](https://github.com/kubernetes-incubator/metrics-server)
 - Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following service label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
-- Ensure the following metrics from kube-state-metrics are available: kube_pod_container_resource_requests_memory_byte, kube_pod_container_resource_limits_memory_bytes, kube_pod_container_resource_requests_cpu_cores,
-  kube_pod_container_resource_limits_cpu_cores,
-  kube_deployment_status_replicas_available
+- **Note:** If you have limited your already existing kube-state-metrics, ensure the following metrics from kube-state-metrics are available:
 
-**Note** These tools are available in tooling if you want to install them from here.
+```
+kube_pod_container_resource_requests_memory_byte,
+kube_pod_container_resource_limits_memory_bytes,
+kube_pod_container_resource_requests_cpu_cores,
+kube_pod_container_resource_limits_cpu_cores,
+kube_deployment_status_replicas_available
+```
+
+**Note** These tools are available in tooling and `./tooling.yaml` if you want to install them from here.
 
 **Valence can be installed:**
 
@@ -174,7 +183,32 @@ spec:
 
 **2) Label the deployment with that SLO and add Prometheus Proxy:**
 
-Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
+#### Selecting SLO
+
+Choose the Deployment(s) you'd like to be operated by that Service Level Objective and Label them accordingly.
+
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: todo-backend-django
+  labels:
+    app: todo-backend-django
+    # Add this as a label to your Deployment to match the selector you defined above.
+    slo: slo-webapps
+...
+  template:
+    metadata:
+      labels:
+        app: todo-backend-django
+        # Add this as a template label to your Deployment to match the selector you defined above.
+        slo: slo-webapps
+...
+```
+
+#### Adding Sidecar
+
+Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers, linkerd, istio or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
 
 Add the proxy container to your deployment and set the target address to where your application is normally serving.
 
@@ -217,13 +251,13 @@ spec:
   strategy:
     # Ensure we use rolling updates with:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 2
+      maxUnavailable: 10%
 ```
 
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
-**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence comptable service.**
+**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence compatible service.**
 
 Example [todo-backend-django/service.yaml](./example/workloads/todo-backend-django-valence/service.yaml)
 Change:
@@ -322,7 +356,7 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
     # Minimum cpu requests to recommend.
     valence.io/optimizer.min-cpu-requests: "100m"
     # Minimum memory requests to recommend.
-    # Set this to your max heap size if you are using JVM.
+    # For example: set this to your max heap size if you are using JVM.
     valence.io/optimizer.min-memory-requests: "500M"
 ```
 
@@ -385,10 +419,14 @@ They will use the following SLO manifests:
 
 Want to get started quickly with example workloads?
 
-- start on a fresh cluster such as docker-for-desktop
-- if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectl apply -f valence.yaml -f example-workloads.yaml`
-- `kubectl proxy svc/grafana -n valence-system &`
-- `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
-- Authentication is Grafana Default: username: admin, password: admin
-- Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
+- start on a fresh cluster such as docker-for-desktop or a testing instance of GKE
+- Clone the Valence repo: `git clone https://github.com/valencenet/valence-manifests`
+- _if your cluster already has metrics-server (GKE does by default)_ run `make tooling-no-ms`
+- Apply the Tooling (Metrics server (if don't have) and Kube-state-metrics): `kubectl apply -f tooling.yaml`
+- Apply the Valence system: `kubectl apply -f valence.yaml`
+- Apply the Example workloads and tooling: `kubectl apply -f example-workloads.yaml`
+- View results!
+- - `kubectl proxy svc/grafana -n valence-system &`
+- - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+    Authentication is Grafana Default: username: admin, password: admin
+    Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
