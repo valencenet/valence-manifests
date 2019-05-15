@@ -11,3 +11,11 @@ valence: build-valence
 
 example-workloads: install-kustomize
 	kustomize build ./example > example-workloads.yaml
+
+tooling: install-kustomize
+	kustomize build ./tooling > tooling.yaml
+
+tooling-no-ms: install-kustomize
+	sed -i 's/- .\/metrics-server//g' ./tooling/kustomization.yaml
+	kustomize build ./example > example-workloads.yaml
+	

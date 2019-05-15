@@ -58,20 +58,23 @@ spec:
 
 ## Want to get started quickly with example workloads?
 
-- start on a fresh cluster such as docker-for-desktop
-- if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectl apply -f valence.yaml`
-- `kubectl apply -f example-workloads.yaml`
-- `kubectl proxy svc/grafana -n valence-system &`
-- `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
-- Authentication is Grafana Default: username: admin, password: admin
-- Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
+- start on a fresh cluster such as docker-for-desktop or a testing instance of GKE
+- Clone the Valence repo: `git clone https://github.com/valencenet/valence-manifests`
+- _if your cluster already has metrics-server (GKE does by default)_ run `make tooling-no-ms`
+- Apply the Tooling (Metrics server (if don't have) and Kube-state-metrics): `kubectl apply -f tooling.yaml`
+- Apply the Valence system: `kubectl apply -f valence.yaml`
+- Apply the Example workloads and tooling: `kubectl apply -f example-workloads.yaml`
+- View results!
+- - `kubectl proxy svc/grafana -n valence-system &`
+- - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+    Authentication is Grafana Default: username: admin, password: admin
+    Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
 
 ## How to get started
 
-In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf. 
+In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
 
-Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net 
+Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net
 
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ info@valence.net)
@@ -106,11 +109,17 @@ If you don't have these, you can take a look at the tooling manifests for exampl
 
 - [metrics-server](https://github.com/kubernetes-incubator/metrics-server)
 - Scrapable [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) with the following service label: `app: kube-state-metrics` **Note:** This component is only necessary for supplementing our dashboard if you don't need existing deploy information in the dashboard than its optional.
-- Ensure the following metrics from kube-state-metrics are available: kube_pod_container_resource_requests_memory_byte, kube_pod_container_resource_limits_memory_bytes, kube_pod_container_resource_requests_cpu_cores,
-  kube_pod_container_resource_limits_cpu_cores,
-  kube_deployment_status_replicas_available
+- **Note:** If you have limited your already existing kube-state-metrics, ensure the following metrics from kube-state-metrics are available:
 
-**Note** These tools are available in tooling if you want to install them from here.
+```
+kube_pod_container_resource_requests_memory_byte,
+kube_pod_container_resource_limits_memory_bytes,
+kube_pod_container_resource_requests_cpu_cores,
+kube_pod_container_resource_limits_cpu_cores,
+kube_deployment_status_replicas_available
+```
+
+**Note** These tools are available in tooling and `./tooling.yaml` if you want to install them from here.
 
 **Valence can be installed:**
 
@@ -385,10 +394,14 @@ They will use the following SLO manifests:
 
 Want to get started quickly with example workloads?
 
-- start on a fresh cluster such as docker-for-desktop
-- if your cluster already has metrics-server remove `./metrics-server` from `./example/tooling/kustomization.yaml` and recompile `make example-workloads`
-- `kubectl apply -f valence.yaml -f example-workloads.yaml`
-- `kubectl proxy svc/grafana -n valence-system &`
-- `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
-- Authentication is Grafana Default: username: admin, password: admin
-- Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
+- start on a fresh cluster such as docker-for-desktop or a testing instance of GKE
+- Clone the Valence repo: `git clone https://github.com/valencenet/valence-manifests`
+- _if your cluster already has metrics-server (GKE does by default)_ run `make tooling-no-ms`
+- Apply the Tooling (Metrics server (if don't have) and Kube-state-metrics): `kubectl apply -f tooling.yaml`
+- Apply the Valence system: `kubectl apply -f valence.yaml`
+- Apply the Example workloads and tooling: `kubectl apply -f example-workloads.yaml`
+- View results!
+- - `kubectl proxy svc/grafana -n valence-system &`
+- - `open http://localhost:8001/api/v1/namespaces/valence-system/services/grafana/proxy`
+    Authentication is Grafana Default: username: admin, password: admin
+    Recommendations for Replicas, Requests and Limits, and live changes to those should start coming in 5-20 minutes.
