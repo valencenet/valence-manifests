@@ -81,7 +81,7 @@ data:
         replacement: metrics
         action: replace
     - job_name: kubernetes-nodes-cadvisor
-      scrape_interval: 1m
+      scrape_interval: 5s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: https
