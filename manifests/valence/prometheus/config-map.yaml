@@ -82,7 +82,7 @@ data:
         action: replace
     - job_name: kubernetes-nodes-cadvisor
       scrape_interval: 5s
-      scrape_timeout: 10s
+      scrape_timeout: 5s
       metrics_path: /metrics
       scheme: https
       kubernetes_sd_configs:
