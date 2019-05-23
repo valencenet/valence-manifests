@@ -1,0 +1,5 @@
+commonLabels:
+  app: workload-simulation
+resources:
+  - todo-backend-django-valence.yaml
+  - todo-backend-django.yaml

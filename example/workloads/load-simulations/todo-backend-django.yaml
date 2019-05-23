@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: majin-todo-backend-django
+spec:
+  template:
+    spec:
+      containers:
+        - name: majin
+          image: valencenet/majin:0.2.10
+          args:
+            - attack
+            - --base-load
+            - "500"
+            - --period
+            - "300"
+          env:
+            - name: TARGET
+              value: http://todo-backend-django.default/todos
+      restartPolicy: OnFailure

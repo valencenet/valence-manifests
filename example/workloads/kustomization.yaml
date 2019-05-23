@@ -1,5 +1,6 @@
 bases:
   - ./todo-backend-django
   - ./todo-backend-django-valence
+  - ./load-simulations
 resources:
   - ./slo-webapps.yaml

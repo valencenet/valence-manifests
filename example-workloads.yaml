@@ -160,13 +160,13 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: todo-backend-django-valence
+    app: workload-simulation
   name: majin-todo-backend-django-valence
 spec:
   template:
     metadata:
       labels:
-        app: todo-backend-django-valence
+        app: workload-simulation
     spec:
       containers:
       - args:
@@ -186,13 +186,13 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: todo-backend-django
+    app: workload-simulation
   name: majin-todo-backend-django
 spec:
   template:
     metadata:
       labels:
-        app: todo-backend-django
+        app: workload-simulation
     spec:
       containers:
       - args:
