@@ -74,7 +74,7 @@ spec:
 
 In order to get the most of out Valence, we recommend starting with Valence in recommendation mode. This will help you understand the configuration options of Valence, before going into Live mode where Valence takes control of your deployments resourcing and scaling on your behalf.
 
-Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection please contact info@valence.net
+Once Valence is installed, it will be sending metrics data remotely to the Valence server for our analysis and improvement. If you'd like to opt-out of data collection follow instructions during installation
 
 **Step 1 - Installation:**
 Follow the installation instructions below (full support from the Valence team will be available @ info@valence.net)
@@ -142,6 +142,8 @@ Valence can be removed by deleting valence.yaml
 ```
 kubectl delete -f valence.yaml
 ```
+
+- \*_opt out of data collection_ You can opt out of data collection by turning the `DATA_OPT_OUT` flag on the valence operator to be true here:
 
 Components installed in valence-system namespace:
 
@@ -232,7 +234,7 @@ metadata:
     spec:
       containers:
       - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.10
+        image: valencenet/prometheus-proxy:0.2.11
         imagePullPolicy: IfNotPresent
         env:
         - name: TARGET_ADDRESS
