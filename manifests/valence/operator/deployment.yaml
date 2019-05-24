@@ -14,8 +14,10 @@ spec:
           args:
             - operator
           env:
+            - name: DATA_OPT_OUT
+              value: "false"
             - name: LICENSE_KEY
-              value: "license-key"
+              value: "license key"
             - name: MIN_SAMPLE_SIZE
               value: "20"
             - name: PROMETHEUS_URL

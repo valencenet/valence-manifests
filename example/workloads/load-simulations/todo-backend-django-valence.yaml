@@ -6,15 +6,15 @@ spec:
   template:
     spec:
       containers:
-      - name: majin
-        image: valencenet/majin:0.2.10
-        args:
-        - attack
-        - --base-load
-        - "500"
-        - --period
-        - "300"
-        env:
-        - name: TARGET
-          value: http://todo-backend-django-valence.default/todos
+        - name: majin
+          image: valencenet/majin:0.2.11
+          args:
+            - attack
+            - --base-load
+            - "500"
+            - --period
+            - "300"
+          env:
+            - name: TARGET
+              value: http://todo-backend-django-valence.default/todos
       restartPolicy: OnFailure
