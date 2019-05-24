@@ -123,6 +123,8 @@ kube_deployment_status_replicas_available
 
 **Valence can be installed:**
 
+- **Opt out of data collection** You can opt out of data collection (ie. for on-prem) by turning the `DATA_OPT_OUT` flag on the valence operator from "false" to be "true" here: https://github.com/valencenet/valence-manifests/blob/master/manifests/valence/operator/deployment.yaml#L18
+
 - **Free** by adding an email as your license and applying valence.
 
 ```
@@ -143,7 +145,6 @@ Valence can be removed by deleting valence.yaml
 kubectl delete -f valence.yaml
 ```
 
-- \*_opt out of data collection_ You can opt out of data collection by turning the `DATA_OPT_OUT` flag on the valence operator to be true here:
 
 Components installed in valence-system namespace:
 
