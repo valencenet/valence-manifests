@@ -16,7 +16,7 @@
 
 ## How it works
 
-Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP Requests).
+Valence is based on the notion of Declarative Performance. We believe you should be able to declare performance objectives and have an operator (Valence) which figures out how to autoscale, right size, and pack your Kubernetes resources. In contrast, current Kubernetes scaling and performance management tools are largely imperative requiring overhead to determine right size, autoscaling metrics, related configuration. Since code, traffic, and node utilization changes - we believe this should be managed automatically by an operator, rather than by manual calculation and intervention. We also think the right unit of scaling isn't utilization or metrics thresholds but based, dynamically, on how applications behavour (utilization) responds to its use (such as HTTP or gRPC Requests).
 
 ## Declarative Performance: The Service Level Objective Manifest
 
@@ -132,7 +132,7 @@ make valence LICENSE=<YOUR.EMAIL>
 kubectl apply -f valence.yaml
 ```
 
-- **Metered** by adding your license key you provisioned through during sign up on manifold and applying valence.
+- **License** by adding your license key you provisioned through during sign up on manifold and applying valence.
 
 ```
 make valence LICENSE=<YOUR.LICENSE.KEY>
@@ -144,7 +144,6 @@ Valence can be removed by deleting valence.yaml
 ```
 kubectl delete -f valence.yaml
 ```
-
 
 Components installed in valence-system namespace:
 
@@ -184,7 +183,7 @@ spec:
         throughput: 500
 ```
 
-**2) Label the deployment with that SLO and add Prometheus Proxy:**
+**2) Label the deployment with that SLO and add Envoy:**
 
 #### Selecting SLO
 
@@ -211,9 +210,9 @@ metadata:
 
 #### Adding Sidecar
 
-Valence collects application metrics through a sidecar. If you’d prefer to collect metrics based on your ingress, load-balancer, envoy containers, linkerd, istio or otherwise, let the Valence team know. This will eventually be automated, all feedback is appreciated!
+Valence collects application metrics through a sidecar, [envoy](https://www.envoyproxy.io/). If you’d prefer to collect metrics based on your ingress, load-balancer, custom envoy containers, linkerd, istio or otherwise, let the Valence team know, we are currently working on custom app metrics. This will eventually be automated, all feedback is appreciated!
 
-Add the proxy container to your deployment and set the target address to where your application is normally serving.
+Add the envoy proxy container to your deployment and set the target address to where your application is normally serving.
 
 Example: [todo-backend-django/deployment.yaml](./example/workloads/todo-backend-django-valence/deployment.yaml)
 
@@ -234,14 +233,17 @@ metadata:
 ...
     spec:
       containers:
-      - name: prometheus-proxy
-        image: valencenet/prometheus-proxy:0.2.11
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TARGET_ADDRESS
-          value: "http://127.0.0.1:8000" # where your app is serving on
-        args:
-          - start
+        - name: envoy
+          image: valencenet/envoyproxy:latest
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVICE_PORT_VALUE
+            value: "8000" # this should be the port your app is serving on.
+          ports:
+            - containerPort: 8081
+              name: envoy-sidecar
+            - containerPort: 8181
+              name: envoy-metrics
 ...
 ```
 
@@ -260,7 +262,7 @@ spec:
 
 It is also helpful if you are using readiness and liveness probes to ensure availablity.
 
-**3) Label your Kubernetes Service for that Deployment with the Valence proxy collection and replace your existing service with a Valence compatible service.**
+**3) Label your Kubernetes Service for that Deployment with the envoy proxy collection and replace your existing service with a Valence compatible service.**
 
 Example [todo-backend-django/service.yaml](./example/workloads/todo-backend-django-valence/service.yaml)
 Change:
@@ -300,7 +302,7 @@ spec:
   # This would be your port you were exposing your application on.
   - name: headless # this name is arbitrary and can be changed to anything you want.
     port: 80
-    targetPort: 8081 # this is the port prometheus-proxy is serving on
+    targetPort: 8081 # this is the port envoy is serving on
   # These three lines allow us to scrape application metrics.
   - name: prometheus
     port: 8181
@@ -409,16 +411,18 @@ You will see:
 
 ## Example Workloads
 
-If you want to test out valence on example workloads we have provided examples manifests that you can use. We generate synthetic workloads using our realistic workload generation tool Majin (see the workload.yaml files). See the `example/workloads` dir for more details.
+If you want to test out valence on example workloads we have provided examples manifests that you can use. We generate synthetic workloads using our realistic workload generation tool Majin (see the workload.yaml files). See the `example/workloads` dir for more details. There are also additional gRPC workloads in `example/workloads/grpc`.
 
 The workloads for testing are:
 
 - todo-backend-django (this is a control workload not using valence)
 - todo-backend-django-valence
+- grpc (fortune-telling-app)
 
 They will use the following SLO manifests:
 
 - slo-webapps
+- slo-grpc
 
 Want to get started quickly with example workloads?
 

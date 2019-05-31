@@ -117,13 +117,13 @@ data:
     - job_name: prometheus-valence
       scrape_interval: 5s
       scrape_timeout: 5s
-      metrics_path: /metrics
+      metrics_path: /stats/prometheus
       scheme: http
       kubernetes_sd_configs:
       - role: endpoints
       metric_relabel_configs:
       - source_labels: [__name__]
-        regex: (?i)(promproxy_metric_handler_detailed_requests_count|promproxy_metric_handler_detailed_requests)
+        regex: (?i)(envoy_http_downstream_rq_time_bucket|envoy_http_downstream_rq_total)
         action: keep
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_valence_net_prometheus]

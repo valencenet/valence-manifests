@@ -18,14 +18,17 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-        - name: prometheus-proxy
-          image: valencenet/prometheus-proxy:0.2.11
+        - name: envoy
+          image: valencenet/envoyproxy:0.3.0
           imagePullPolicy: IfNotPresent
           env:
-            - name: TARGET_ADDRESS
-              value: "http://127.0.0.1:8000"
-          args:
-            - start
+          - name: SERVICE_PORT_VALUE
+            value: "8000"
+          ports:
+            - containerPort: 8081
+              name: envoy-sidecar
+            - containerPort: 8181
+              name: envoy-metrics
         - image: manifoldco/todo-backend-django:latest
           imagePullPolicy: IfNotPresent
           name: todo-backend-django

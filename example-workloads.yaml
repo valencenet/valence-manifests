@@ -61,17 +61,17 @@ spec:
         app: todo-backend-django-valence
     spec:
       containers:
-      - args:
-        - start
-        env:
-        - name: TARGET_ADDRESS
-          value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.11
+      - env:
+        - name: SERVICE_PORT_VALUE
+          value: "8000"
+        image: valencenet/envoyproxy:0.3.0
         imagePullPolicy: IfNotPresent
-        name: prometheus-proxy
-        resources:
-          requests:
-            cpu: 100m
+        name: envoy
+        ports:
+        - containerPort: 8081
+          name: envoy-sidecar
+        - containerPort: 8181
+          name: envoy-metrics
       - env:
         - name: PORT
           value: "8000"
@@ -121,14 +121,17 @@ spec:
         app: todo-backend-django
     spec:
       containers:
-      - args:
-        - start
-        env:
-        - name: TARGET_ADDRESS
-          value: http://127.0.0.1:8000
-        image: valencenet/prometheus-proxy:0.2.11
+      - env:
+        - name: SERVICE_PORT_VALUE
+          value: "8000"
+        image: valencenet/envoyproxy:0.3.0
         imagePullPolicy: IfNotPresent
-        name: prometheus-proxy
+        name: envoy
+        ports:
+        - containerPort: 8081
+          name: envoy-sidecar
+        - containerPort: 8181
+          name: envoy-metrics
       - env:
         - name: PORT
           value: "8000"
@@ -172,13 +175,13 @@ spec:
       - args:
         - attack
         - --base-load
-        - "500"
+        - "300"
         - --period
         - "300"
         env:
         - name: TARGET
           value: http://todo-backend-django-valence.default/todos
-        image: valencenet/majin:0.2.11
+        image: valencenet/majin:0.3.0
         name: majin
       restartPolicy: OnFailure
 ---
@@ -198,13 +201,13 @@ spec:
       - args:
         - attack
         - --base-load
-        - "500"
+        - "300"
         - --period
         - "300"
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos
-        image: valencenet/majin:0.2.11
+        image: valencenet/majin:0.3.0
         name: majin
       restartPolicy: OnFailure
 ---

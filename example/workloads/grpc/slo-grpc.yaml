@@ -1,0 +1,13 @@
+apiVersion: optimizer.valence.io/v1alpha1
+kind: ServiceLevelObjective
+metadata:
+  name: slo-grpc
+spec:
+  selector:
+    slo: slo-grpc
+  objectives:
+    - type: HTTP
+      http:
+        latency:
+          percentile: 95
+          responseTime: 100ms

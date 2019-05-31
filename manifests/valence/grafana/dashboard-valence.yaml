@@ -22,7 +22,7 @@ data:
       "gnetId": null,
       "graphTooltip": 0,
       "id": 1,
-      "iteration": 1551793537194,
+      "iteration": 1559313049824,
       "links": [],
       "panels": [
         {
@@ -314,13 +314,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(increase(promproxy_metric_handler_detailed_requests_count{service=\"$deployment\"}[1m])) / 60",
+              "expr": "sum(rate(envoy_http_downstream_rq_total{service=\"$deployment\"}[1m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "HTTP Queries Per Second",
               "refId": "A"
+            },
+            {
+              "expr": "",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -400,13 +406,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(promproxy_metric_handler_detailed_requests{service=\"$deployment\", quantile=\"$LatencyPercentile\", code!=\"502\"}[1m]))",
+              "expr": "avg(histogram_quantile($LatencyPercentile, sum(rate(envoy_http_downstream_rq_time_bucket{service=\"$deployment\"}[1m])) by(le, pod)))",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "HTTP Request Latency",
               "refId": "A"
+            },
+            {
+              "expr": "valence_slo_http_latency{name=\"$deployment\"}",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -428,7 +440,7 @@ data:
           },
           "yaxes": [
             {
-              "format": "s",
+              "format": "ms",
               "label": "",
               "logBase": 1,
               "max": null,
@@ -556,8 +568,9 @@ data:
             "allValue": null,
             "current": {
               "selected": false,
-              "text": "todo-backend-java",
-              "value": "todo-backend-java"
+              "tags": [],
+              "text": "todo-backend-django",
+              "value": "todo-backend-django"
             },
             "datasource": "DS_PROM_VALENCE",
             "hide": 0,
@@ -566,7 +579,7 @@ data:
             "multi": false,
             "name": "deployment",
             "options": [],
-            "query": "label_values(promproxy_metric_handler_detailed_requests, service)",
+            "query": "label_values(envoy_http_downstream_rq_total, service)",
             "refresh": 1,
             "regex": "",
             "sort": 0,
@@ -580,30 +593,49 @@ data:
             "allValue": null,
             "current": {
               "selected": true,
+              "tags": [],
               "text": "0.95",
               "value": "0.95"
             },
-            "datasource": "DS_PROM_VALENCE",
             "hide": 0,
             "includeAll": false,
             "label": "Latency Percentile",
             "multi": false,
             "name": "LatencyPercentile",
-            "options": [],
-            "query": "label_values(promproxy_metric_handler_detailed_requests, quantile)",
-            "refresh": 1,
-            "regex": "",
-            "sort": 0,
-            "tagValuesQuery": "",
-            "tags": [],
-            "tagsQuery": "",
-            "type": "query",
-            "useTags": false
+            "options": [
+              {
+                "selected": false,
+                "text": "0.5",
+                "value": "0.5"
+              },
+              {
+                "selected": false,
+                "text": "0.75",
+                "value": "0.75"
+              },
+              {
+                "selected": false,
+                "text": "0.9",
+                "value": "0.9"
+              },
+              {
+                "selected": true,
+                "text": "0.95",
+                "value": "0.95"
+              },
+              {
+                "selected": false,
+                "text": "0.99",
+                "value": "0.99"
+              }
+            ],
+            "query": "0.5, 0.75, 0.9, 0.95, 0.99",
+            "type": "custom"
           }
         ]
       },
       "time": {
-        "from": "now-5m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
