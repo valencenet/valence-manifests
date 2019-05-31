@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fortune-teller-app
+  labels:
+    k8s-app: fortune-teller-app
+    slo: slo-webapps
+  annotations:
+    valence.io/optimizer.configure: "true"
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: fortune-teller-app
+        slo: slo-webapps
+    spec:
+      containers:
+      - name: envoy
+        image: valencenet/envoyproxy:0.3.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SERVICE_PORT_VALUE
+          value: "50051"
+        ports:
+          - containerPort: 8081
+            name: envoy-sidecar
+          - containerPort: 8181
+            name: envoy-metrics
+      - name: fortune-teller-app
+        image: quay.io/kubernetes-ingress-controller/grpc-fortune-teller:0.1
+        ports:
+        - containerPort: 50051
+          name: grpc

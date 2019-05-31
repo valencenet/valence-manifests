@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: valence-system
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -15,7 +15,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: servicelevelobjectives.optimizer.valence.io
 spec:
   group: optimizer.valence.io
@@ -41,7 +41,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: valence-operator
   namespace: valence-system
 ---
@@ -83,7 +83,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: valence:optimization-operator
 rules:
 - apiGroups:
@@ -153,7 +153,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: valence:optimization-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -185,7 +185,7 @@ data:
       "gnetId": null,
       "graphTooltip": 0,
       "id": 1,
-      "iteration": 1551793537194,
+      "iteration": 1559313049824,
       "links": [],
       "panels": [
         {
@@ -477,13 +477,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(increase(promproxy_metric_handler_detailed_requests_count{service=\"$deployment\"}[1m])) / 60",
+              "expr": "sum(rate(envoy_http_downstream_rq_total{service=\"$deployment\"}[1m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "HTTP Queries Per Second",
               "refId": "A"
+            },
+            {
+              "expr": "",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -563,13 +569,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(rate(promproxy_metric_handler_detailed_requests{service=\"$deployment\", quantile=\"$LatencyPercentile\", code!=\"502\"}[1m]))",
+              "expr": "avg(histogram_quantile($LatencyPercentile, sum(rate(envoy_http_downstream_rq_time_bucket{service=\"$deployment\"}[1m])) by(le, pod)))",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "HTTP Request Latency",
               "refId": "A"
+            },
+            {
+              "expr": "valence_slo_http_latency{name=\"$deployment\"}",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -591,7 +603,7 @@ data:
           },
           "yaxes": [
             {
-              "format": "s",
+              "format": "ms",
               "label": "",
               "logBase": 1,
               "max": null,
@@ -719,8 +731,9 @@ data:
             "allValue": null,
             "current": {
               "selected": false,
-              "text": "todo-backend-java",
-              "value": "todo-backend-java"
+              "tags": [],
+              "text": "todo-backend-django",
+              "value": "todo-backend-django"
             },
             "datasource": "DS_PROM_VALENCE",
             "hide": 0,
@@ -729,7 +742,7 @@ data:
             "multi": false,
             "name": "deployment",
             "options": [],
-            "query": "label_values(promproxy_metric_handler_detailed_requests, service)",
+            "query": "label_values(envoy_http_downstream_rq_total, service)",
             "refresh": 1,
             "regex": "",
             "sort": 0,
@@ -743,30 +756,49 @@ data:
             "allValue": null,
             "current": {
               "selected": true,
+              "tags": [],
               "text": "0.95",
               "value": "0.95"
             },
-            "datasource": "DS_PROM_VALENCE",
             "hide": 0,
             "includeAll": false,
             "label": "Latency Percentile",
             "multi": false,
             "name": "LatencyPercentile",
-            "options": [],
-            "query": "label_values(promproxy_metric_handler_detailed_requests, quantile)",
-            "refresh": 1,
-            "regex": "",
-            "sort": 0,
-            "tagValuesQuery": "",
-            "tags": [],
-            "tagsQuery": "",
-            "type": "query",
-            "useTags": false
+            "options": [
+              {
+                "selected": false,
+                "text": "0.5",
+                "value": "0.5"
+              },
+              {
+                "selected": false,
+                "text": "0.75",
+                "value": "0.75"
+              },
+              {
+                "selected": false,
+                "text": "0.9",
+                "value": "0.9"
+              },
+              {
+                "selected": true,
+                "text": "0.95",
+                "value": "0.95"
+              },
+              {
+                "selected": false,
+                "text": "0.99",
+                "value": "0.99"
+              }
+            ],
+            "query": "0.5, 0.75, 0.9, 0.95, 0.99",
+            "type": "custom"
           }
         ]
       },
       "time": {
-        "from": "now-5m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
@@ -955,13 +987,13 @@ data:
     - job_name: prometheus-valence
       scrape_interval: 5s
       scrape_timeout: 5s
-      metrics_path: /metrics
+      metrics_path: /stats/prometheus
       scheme: http
       kubernetes_sd_configs:
       - role: endpoints
       metric_relabel_configs:
       - source_labels: [__name__]
-        regex: (?i)(promproxy_metric_handler_detailed_requests_count|promproxy_metric_handler_detailed_requests)
+        regex: (?i)(envoy_http_downstream_rq_time_bucket|envoy_http_downstream_rq_total)
         action: keep
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_label_valence_net_prometheus]
@@ -1102,7 +1134,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: optimization-operator
   namespace: valence-system
 spec:
@@ -1114,7 +1146,7 @@ spec:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   type: NodePort
 ---
 apiVersion: v1
@@ -1208,7 +1240,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/name: valence
     app.kubernetes.io/part-of: valence
-    app.kubernetes.io/version: 0.2.11
+    app.kubernetes.io/version: 0.3.0
   name: optimization-operator
   namespace: valence-system
 spec:
@@ -1218,14 +1250,14 @@ spec:
       app.kubernetes.io/component: operator
       app.kubernetes.io/name: valence
       app.kubernetes.io/part-of: valence
-      app.kubernetes.io/version: 0.2.11
+      app.kubernetes.io/version: 0.3.0
   template:
     metadata:
       labels:
         app.kubernetes.io/component: operator
         app.kubernetes.io/name: valence
         app.kubernetes.io/part-of: valence
-        app.kubernetes.io/version: 0.2.11
+        app.kubernetes.io/version: 0.3.0
     spec:
       containers:
       - args:
@@ -1239,7 +1271,7 @@ spec:
           value: "20"
         - name: PROMETHEUS_URL
           value: http://prometheus-valence.valence-system.svc:9090
-        image: valencenet/valence:0.2.11
+        image: valencenet/valence:0.3.0
         imagePullPolicy: Always
         name: optimization-operator
         resources:

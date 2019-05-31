@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fortune-teller-app
+  namespace: default
+  labels:
+    valence.net/prometheus: "true"
+spec:
+  selector:
+    k8s-app: fortune-teller-app
+  ports:
+  - name: http2
+    port: 80
+    targetPort: 8081
+  - name: prometheus
+    port: 8181
+    targetPort: 8181
