@@ -4,7 +4,7 @@ metadata:
   name: fortune-teller-app
   labels:
     k8s-app: fortune-teller-app
-    slo: slo-webapps
+    slo: slo-grpc
   annotations:
     valence.io/optimizer.configure: "true"
   namespace: default
@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         k8s-app: fortune-teller-app
-        slo: slo-webapps
+        slo: slo-grpc
     spec:
       containers:
       - name: envoy
@@ -23,6 +23,8 @@ spec:
         env:
         - name: SERVICE_PORT_VALUE
           value: "50051"
+        - name: PROTOCAL
+          value: http2
         ports:
           - containerPort: 8081
             name: envoy-sidecar

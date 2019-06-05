@@ -239,6 +239,9 @@ metadata:
           env:
           - name: SERVICE_PORT_VALUE
             value: "8000" # this should be the port your app is serving on.
+          # if you are using HTTP2 with something like grpc then you should include the following:
+          # - name: PROTOCAL
+          # value: http2
           ports:
             - containerPort: 8081
               name: envoy-sidecar

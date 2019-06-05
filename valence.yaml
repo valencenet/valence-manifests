@@ -732,8 +732,8 @@ data:
             "current": {
               "selected": false,
               "tags": [],
-              "text": "todo-backend-django",
-              "value": "todo-backend-django"
+              "text": "todo-backend-django-valence",
+              "value": "todo-backend-django-valence"
             },
             "datasource": "DS_PROM_VALENCE",
             "hide": 0,
