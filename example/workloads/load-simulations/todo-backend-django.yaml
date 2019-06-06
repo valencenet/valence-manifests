@@ -13,7 +13,7 @@ spec:
             - --base-load
             - "300"
             - --period
-            - "300"
+            - "600"
           env:
             - name: TARGET
               value: http://todo-backend-django.default/todos
