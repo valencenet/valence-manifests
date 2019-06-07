@@ -184,8 +184,7 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 1,
-      "iteration": 1559313049824,
+      "iteration": 1559914263326,
       "links": [],
       "panels": [
         {
@@ -569,7 +568,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg(histogram_quantile($LatencyPercentile, sum(rate(envoy_http_downstream_rq_time_bucket{service=\"$deployment\"}[1m])) by(le, pod)))",
+              "expr": "avg(histogram_quantile($LatencyPercentile, sum(rate(envoy_http_downstream_rq_time_bucket{service=\"$deployment\"}[30s])) by(le, pod)))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -581,6 +580,7 @@ data:
               "expr": "valence_slo_http_latency{name=\"$deployment\"}",
               "format": "time_series",
               "intervalFactor": 1,
+              "legendFormat": "SLO",
               "refId": "B"
             }
           ],
@@ -730,7 +730,6 @@ data:
           {
             "allValue": null,
             "current": {
-              "selected": false,
               "tags": [],
               "text": "todo-backend-django-valence",
               "value": "todo-backend-django-valence"
@@ -755,7 +754,6 @@ data:
           {
             "allValue": null,
             "current": {
-              "selected": true,
               "tags": [],
               "text": "0.95",
               "value": "0.95"
@@ -798,7 +796,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-3h",
         "to": "now"
       },
       "timepicker": {
@@ -1216,9 +1214,12 @@ spec:
           name: providers
         - mountPath: /etc/grafana/provisioning/datasources
           name: datasources
-        - mountPath: /var/lib/grafana/dashboards/capacity-planning.json
+        - mountPath: /var/lib/grafana/dashboards/valence.json
           name: dashboards-valence
           subPath: valence.json
+        - mountPath: /var/lib/grafana/dashboards/valence-reporting.json
+          name: dashboards-reporting
+          subPath: valence-reporting.json
       restartPolicy: Always
       volumes:
       - emptyDir: {}

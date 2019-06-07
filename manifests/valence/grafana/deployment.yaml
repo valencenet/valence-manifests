@@ -34,9 +34,12 @@ spec:
           name: providers
         - mountPath: /etc/grafana/provisioning/datasources
           name: datasources
-        - mountPath: /var/lib/grafana/dashboards/capacity-planning.json
+        - mountPath: /var/lib/grafana/dashboards/valence.json
           name: dashboards-valence
           subPath: valence.json
+        - mountPath: /var/lib/grafana/dashboards/valence-reporting.json
+          name: dashboards-reporting
+          subPath: valence-reporting.json
       restartPolicy: Always
       volumes:
       - emptyDir: {}
