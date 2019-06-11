@@ -372,6 +372,8 @@ You can use these optional [annotations](https://github.com/valencenet/valence-m
 
 ### Recommendations
 
+#### Prometheus
+
 The recommendations are available in [prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format). Valence exposes its metrics on `/metrics` endpoint on port 8080 of the `optimization-operator.valence-system` service and can be scraped by prometheus and other similar tools for metrics collection in a standard way. The metrics can be accessed like:
 
 ```
@@ -388,6 +390,19 @@ We expose the following metrics:
 - valence_recommendations_replicas
 
 For a example of how we scrape these recommendations for our own local prometheus see [config-map](manifests/valence/prometheus/config-map.yaml#L255) . Here we scrape on the following label: `app.kubernetes.io/component: operator`
+
+#### StatsD / Datadog
+
+The recommendations are available to statsd (or any statsd compatable system) through adding a statsd url to the valence optimization-operator deployment.
+
+Add this
+
+```
+- name: STATSD_URL
+  value: datadog.default:8125 # replace with your statsd url and port
+```
+
+[here](manifests/valence/operator/deployment.yaml#L17)
 
 ### Grafana
 
