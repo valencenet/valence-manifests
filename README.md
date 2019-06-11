@@ -399,7 +399,7 @@ Add this
 
 ```
 - name: STATSD_URL
-  value: datadog.default # replace with your statsd url.
+  value: datadog.default:8125 # replace with your statsd url and port
 ```
 
 [here](manifests/valence/operator/deployment.yaml#L17)
