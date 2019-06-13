@@ -64,7 +64,7 @@ spec:
       - env:
         - name: SERVICE_PORT_VALUE
           value: "8000"
-        image: valencenet/envoyproxy:0.3.1
+        image: valencenet/envoyproxy:0.3.2
         imagePullPolicy: IfNotPresent
         name: envoy
         ports:
@@ -124,7 +124,7 @@ spec:
       - env:
         - name: SERVICE_PORT_VALUE
           value: "8000"
-        image: valencenet/envoyproxy:0.3.1
+        image: valencenet/envoyproxy:0.3.2
         imagePullPolicy: IfNotPresent
         name: envoy
         ports:
@@ -181,7 +181,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django-valence.default/todos
-        image: valencenet/majin:0.3.1
+        image: valencenet/majin:0.3.2
         name: majin
       restartPolicy: OnFailure
 ---
@@ -207,7 +207,7 @@ spec:
         env:
         - name: TARGET
           value: http://todo-backend-django.default/todos
-        image: valencenet/majin:0.3.1
+        image: valencenet/majin:0.3.2
         name: majin
       restartPolicy: OnFailure
 ---
