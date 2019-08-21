@@ -64,7 +64,7 @@ spec:
       - env:
         - name: SERVICE_PORT_VALUE
           value: "8000"
-        image: valencenet/envoyproxy:0.3.2
+        image: valencenet/envoyproxy:0.3.0
         imagePullPolicy: IfNotPresent
         name: envoy
         ports:
@@ -72,6 +72,13 @@ spec:
           name: envoy-sidecar
         - containerPort: 8181
           name: envoy-metrics
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
       - env:
         - name: PORT
           value: "8000"
@@ -124,7 +131,7 @@ spec:
       - env:
         - name: SERVICE_PORT_VALUE
           value: "8000"
-        image: valencenet/envoyproxy:0.3.2
+        image: valencenet/envoyproxy:0.3.0
         imagePullPolicy: IfNotPresent
         name: envoy
         ports:
@@ -132,6 +139,13 @@ spec:
           name: envoy-sidecar
         - containerPort: 8181
           name: envoy-metrics
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500M
+          requests:
+            cpu: 250m
+            memory: 250M
       - env:
         - name: PORT
           value: "8000"
